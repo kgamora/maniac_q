@@ -9,7 +9,7 @@
  */
 
 std::map<char, uint8_t> cols {{'a', 1}, {'b', 2}, {'c', 3}, {'d', 4}, {'e', 5}, {'f', 6}, {'g', 7}, {'h', 8}, {'i', 9},};
-//TODO: считывание когда стенок нет (по разделителю)
+
 State read () {
     State state;
     std::string gamePosition;
@@ -22,8 +22,7 @@ State read () {
             uint8_t col = cols[*i];
             i++;
             uint8_t row = *i - '0';
-//        state.addFence(true, row, col));
-            std::cout << unsigned(row) << ' ' << unsigned(col) << std::endl;
+            state.addFence(true, std::make_pair(row, col));
         }
         std::cin >> gamePosition;
     }
@@ -37,8 +36,7 @@ State read () {
             uint8_t col = cols[*i];
             i++;
             uint8_t row = *i - '0';
-            //        state.addFence(false, std::make_pair(row, col));
-            std::cout << unsigned(row) << ' ' << unsigned(col) << std::endl;
+            state.addFence(false, std::make_pair(row, col));
         }
         std::cin >> gamePosition;
     }
@@ -47,33 +45,27 @@ State read () {
     std::cin >> gamePosition;
     uint8_t row = gamePosition[1] - '0';
     uint8_t col = cols[gamePosition[0]];
-    std::cout << "p1: " << unsigned(row) << ' ' << unsigned(col) << std::endl;
-//    state.setP1(row, col);
+    state.setP1(std::make_pair(row, col));
 
     //p2 position
     std::cin >> gamePosition;
     row = gamePosition[1] - '0';
     col = cols[gamePosition[0]];
-    std::cout << "p2: " << unsigned(row) << ' ' << unsigned(col) << std::endl;
-//    state.setP2(row, col);
+    state.setP2(std::make_pair(row, col));
 
     std::cin >> gamePosition;
 
     //walls
     std::cin >> gamePosition;
-//    state.setP1Walls(gamePosition[0] - '0');
-    std::cout << "p1 walls: " << gamePosition[0] - '0' << std::endl;
+    state.setP1Fences(gamePosition[0] - '0');
     std::cin >> gamePosition;
-    std::cout << "p2 walls: " << gamePosition[0] - '0' << std::endl;
-//    state.setP2Walls(gamePosition[0] - '0');
+    state.setP2Fences(gamePosition[0] - '0');
 
     std::cin >> gamePosition;
 
     //who's turn
     std::cin >> gamePosition;
-//    state.setActivePlayer(gamePosition[0] == '1');
-    std::cout << "active player: " << (gamePosition[0] == '1') << std::endl;
-
+    state.setActivePlayer(gamePosition[0] == '1');
 
     return state;
 }
@@ -92,11 +84,11 @@ void writePosition (State state) {
 
 void printState (State state) {
 
-    std::pair<uint8_t, uint8_t> p1Pos = std::make_pair(5, 3);
-    std::pair<uint8_t, uint8_t> p2Pos = std::make_pair(9, 5);
+    std::pair<uint8_t, uint8_t> p1Pos = state.getP1();
+    std::pair<uint8_t, uint8_t> p2Pos = state.getP2();
 
-    std::vector<std::pair<uint8_t, uint8_t>> verticalWalls {{8, 8}, {3, 8}};
-    std::vector<std::pair<uint8_t, uint8_t>> horizontalWalls {{8, 1}};
+    std::vector<std::pair<uint8_t, uint8_t>> verticalWalls = state.getVerticalFences();
+    std::vector<std::pair<uint8_t, uint8_t>> horizontalWalls = state.getHorizontalFences();
 
     for (int i = 0; i < 19; ++i) {
         std::string line;
@@ -127,9 +119,9 @@ void printState (State state) {
             } else {
                 line.append("|");
                 for (int j = 0; j < 9; ++j) {
-                    if (i == (p1Pos.first - 1) * 2 + 1 and j == p1Pos.second - 1) {
+                    if (i == (p1Pos.first) * 2 + 1 and j == p1Pos.second) {
                         line.append(" X ");
-                    } else if (i == (p2Pos.first - 1) * 2 + 1 and j == p2Pos.second - 1) {
+                    } else if (i == (p2Pos.first) * 2 + 1 and j == p2Pos.second) {
                         line.append(" O ");
                     } else {
                         line.append(std::string(3 , ' '));

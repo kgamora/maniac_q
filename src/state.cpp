@@ -111,3 +111,29 @@ void State::dirtyPrint() const {
 const std::vector<std::vector<uint8_t>>& State::getGraph() {
     return graph;
 }
+
+std::vector<std::pair<uint8_t, uint8_t>> State::getHorizontalFences() const {
+    return horizontalFences;
+}
+
+std::vector<std::pair<uint8_t, uint8_t>> State::getVerticalFences() const {
+    return verticalFences;
+}
+
+void State::setP1Fences(uint8_t n) {
+    p1Fences = n;
+}
+
+void State::setP2Fences(uint8_t n) {
+    p2Fences = n;
+}
+
+void State::setActivePlayer(bool p1IsActivePlayer) {
+    activePlayer = p1IsActivePlayer;
+}
+
+bool State::getActivePlayer() {
+    return activePlayer;
+}
+
+
