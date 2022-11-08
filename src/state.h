@@ -1,6 +1,10 @@
 #pragma once
 #include <cstdlib>
 #include <vector>
+#include <cstdint>
+#include <cassert>
+#include <iostream>
+#include <algorithm>
 
 class State {
 public:
@@ -16,6 +20,8 @@ public:
     void dirtyPrint() const;
     void setP1Fences(uint8_t n);
     void setP2Fences(uint8_t n);
+    uint8_t getP1Fences();
+    uint8_t getP2Fences();
     void setActivePlayer(bool);
     bool getActivePlayer();
 

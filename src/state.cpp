@@ -1,7 +1,4 @@
 #include "state.h"
-#include <cstdlib>
-#include <vector>
-#include <iostream>
 
 State::State() : board_size(81),
                  p1Fences(10),
@@ -118,6 +115,14 @@ std::vector<std::pair<uint8_t, uint8_t>> State::getHorizontalFences() const {
 
 std::vector<std::pair<uint8_t, uint8_t>> State::getVerticalFences() const {
     return verticalFences;
+}
+
+uint8_t State::getP1Fences() {
+    return p1Fences;
+}
+
+uint8_t State::getP2Fences() {
+    return p2Fences;
 }
 
 void State::setP1Fences(uint8_t n) {
