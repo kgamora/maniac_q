@@ -12,6 +12,6 @@ State parseMove(const State& currentState,const std::string& move) {
         bool isHorizontal = move[2] == 'h';
         return makeFence(currentState, isHorizontal, std::make_pair(row, col));
     } else {
-        return makeMove(currentState, std::make_pair(row, col));
+        return makeMove(currentState, std::make_pair(row - 1, col - 1));
     }
 }
