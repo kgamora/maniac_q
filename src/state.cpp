@@ -1,4 +1,4 @@
-#include "state.h"
+#include "state.hpp"
 
 State::State() : board_size(81),
                  p1Fences(10),

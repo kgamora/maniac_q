@@ -2,9 +2,9 @@
 // Created by Иван Назаров on 08.11.2022.
 //
 
-#include "state.h"
+#include "state.hpp"
 #include "read_write.hpp"
-#include "is_valide_state.h"
+#include "is_valide_state.hpp"
 
 int main() {
     State state = read();

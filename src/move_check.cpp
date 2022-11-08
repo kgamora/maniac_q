@@ -1,6 +1,7 @@
-#include "move_check.h"
+#include "move_check.hpp"
+#include "is_valide_state.hpp"
+
 #include <stack>
-#include "is_valide_state.h"
 
 bool isMoveValid(State& s, std::string& move) {
 

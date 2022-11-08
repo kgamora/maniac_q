@@ -1,5 +1,5 @@
 #pragma once
 
-#include "state.h"
+#include "state.hpp"
 
 bool isValidState(State& state);

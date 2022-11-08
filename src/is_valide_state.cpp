@@ -1,8 +1,10 @@
-#include "is_valide_state.h"
+#include "is_valide_state.hpp"
 
 #include <stack>
+#include <vector>
+#include <cstdint>
 
-bool dfs(std::vector<std::vector<uint8_t>>& graph, uint8_t start, uint8_t finish) {
+bool dfs(const std::vector<std::vector<uint8_t>>& graph, uint8_t start, uint8_t finish) {
     std::vector<bool> visited(81, false);
     std::stack<uint8_t> stack;
     stack.push(start);
