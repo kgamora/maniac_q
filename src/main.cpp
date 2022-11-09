@@ -16,6 +16,6 @@ int main() {
     Board board(ss);
     printBoard(board);
     assert(isValidState(board));
-    std::string bestMove = getBestMoveOnDepth(board, 3);
+    std::string bestMove = getBestMoveOnDepth(board, 1);
     std::cout << "лучший ход: " << bestMove;
 }

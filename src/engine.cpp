@@ -99,6 +99,10 @@ std::vector<Board> stateChildren(const Board& board) {
 }
 
 double alpha_beta(const Board& board, int depth, double alpha, double beta, int maximizingPlayer) {
+    static int counter = 0;
+    ++counter;
+    if (counter % 100 == 0)
+        std:: cout << counter << std:: endl;
     if (depth == 0) {
         return evalPosition(board);
     }
