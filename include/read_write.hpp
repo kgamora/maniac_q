@@ -7,6 +7,6 @@
 #include <map>
 #include <algorithm>
 
-Board read();
-void writePosition(const Board& board);
+std::string translatePosition(Position position);
+std::string translateFence(Position position, bool isHorizontal);
 void printBoard(const Board& board);

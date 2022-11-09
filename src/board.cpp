@@ -1,15 +1,32 @@
 #include "board.hpp"
 
-Board::Board() : p1Fences(FENCE_COUNT),
-                 p2Fences(FENCE_COUNT),
-                 p1(0, BOARD_SIDE_LENGTH / 2),
-                 p2(BOARD_SIDE_LENGTH - 1, BOARD_SIDE_LENGTH / 2),
+Board::Board() :
+//                 p1Fences(FENCE_COUNT),
+//                 p2Fences(FENCE_COUNT),
+//                 p1(0, BOARD_SIDE_LENGTH / 2),
+//                 p2(BOARD_SIDE_LENGTH - 1, BOARD_SIDE_LENGTH / 2),
+                 players(2),
                  graph(board_size),
-                 activePlayer(1)
+                 activePlayerIndex(0)
 {
-    for(size_t i = 0; i < board_size; ++i) {
-        uint8_t row = i / BOARD_SIDE_LENGTH;
-        uint8_t col = i % BOARD_SIDE_LENGTH;
+    // 0 - human
+    // 1 - agent
+    players[0].pos = {0, BOARD_SIDE_LENGTH / 2};
+    players[0].fenceCount = FENCE_COUNT;
+    players[0].isMaxPlayer = false;
+    players[1].pos = {BOARD_SIDE_LENGTH - 1, BOARD_SIDE_LENGTH / 2};
+    players[1].fenceCount = FENCE_COUNT;
+    players[1].isMaxPlayer = true;
+    maxPlayerIndex = 1;
+
+    players[0].startRow = 0;
+    players[1].startRow = BOARD_SIDE_LENGTH - 1;
+    players[0].targetRow = players[1].startRow;
+    players[1].targetRow = players[0].startRow;
+
+    for(int i = 0; i < board_size; ++i) {
+        int row = i / BOARD_SIDE_LENGTH;
+        int col = i % BOARD_SIDE_LENGTH;
         if (col > 0) {
             graph[i].push_back(i - 1);
         }
@@ -32,8 +49,8 @@ Board::Board(std::istream& is) {
     is >> gamePosition;
     if (gamePosition[0] != '/') {
         for (char c : gamePosition) {
-            uint8_t col = cols.at(c++);
-            uint8_t row = c - '0';
+            int col = cols.at(c++);
+            int row = c - '0';
             addFence(Position(row, col), true);
         }
         is >> gamePosition;
@@ -43,8 +60,8 @@ Board::Board(std::istream& is) {
     is >> gamePosition;
     if (gamePosition[0] != '/') {
         for (char c : gamePosition) {
-            uint8_t col = cols.at(c++);
-            uint8_t row = c - '0';
+            int col = cols.at(c++);
+            int row = c - '0';
             addFence({row, col}, false);
         }
         is >> gamePosition;
@@ -52,38 +69,50 @@ Board::Board(std::istream& is) {
 
     //p1 position
     is >> gamePosition;
-    uint8_t row = gamePosition[1] - '0';
-    uint8_t col = cols.at(gamePosition[0]);
-    setP1({row, col});
+    int row = gamePosition[1] - '0';
+    int col = cols.at(gamePosition[0]);
+//    setP1({row, col});
+    players[0].pos = {row, col};
 
     //p2 position
-    std::cin >> gamePosition;
+    is >> gamePosition;
     row = gamePosition[1] - '0';
     col = cols.at(gamePosition[0]);
-    setP2({row, col});
+//    setP2({row, col});
+    players[1].pos = {row, col};
 
     is >> gamePosition;
 
     //walls
     is >> gamePosition;
-    setP1Fences(gamePosition[0] - '0');
+//    setP1Fences(gamePosition[0] - '0');
+    players[0].fenceCount = gamePosition[0] - '0';
     is >> gamePosition;
-    setP2Fences(gamePosition[0] - '0');
+//    setP2Fences(gamePosition[0] - '0');
+    players[1].fenceCount = gamePosition[0] - '0';
 
     is >> gamePosition;
 
     //who's turn
     is >> gamePosition;
-    setActivePlayer(gamePosition[0]);
+//    setActivePlayer(gamePosition[0]);
+    activePlayerIndex = gamePosition[0] + 1;
+
+    players[0].isMaxPlayer = false;
+    players[1].isMaxPlayer = true;
+    players[0].startRow = 0;
+    players[1].startRow = BOARD_SIDE_LENGTH - 1;
+    players[0].targetRow = players[1].startRow;
+    players[1].targetRow = players[0].startRow;
 }
 
 void Board::addFence(Position fence, bool horizontal) {
 //    assert(row >= 0 && row <= 8 && col >= 0 && col <= 0);
 
-    uint8_t topLeft = fence.row * BOARD_SIDE_LENGTH + fence.col;
-    uint8_t topRight = topLeft + 1;
-    uint8_t bottomLeft = topLeft + BOARD_SIDE_LENGTH;
-    uint8_t bottomRight = bottomLeft + 1;
+    int topLeft = fence.row * BOARD_SIDE_LENGTH + fence.col;
+    int topRight = topLeft + 1;
+    int bottomLeft = topLeft + BOARD_SIDE_LENGTH;
+    int bottomRight = bottomLeft + 1;
 
     if (horizontal) {
         horizontalFences.push_back(fence);
@@ -96,7 +125,7 @@ void Board::addFence(Position fence, bool horizontal) {
     }
 }
 
-void Board::deleteVerticalEdge(uint8_t top, uint8_t bottom) {
+void Board::deleteVerticalEdge(int top, int bottom) {
     auto upstairsNeighbor = std::find(graph[bottom].begin(), graph[bottom].end(), top);
     if (upstairsNeighbor != graph[bottom].end()) {
         graph[bottom].erase(upstairsNeighbor);
@@ -108,7 +137,7 @@ void Board::deleteVerticalEdge(uint8_t top, uint8_t bottom) {
     }
 }
 
-void Board::deleteHorizontalEdge(uint8_t left, uint8_t right) {
+void Board::deleteHorizontalEdge(int left, int right) {
     auto rightsideNeighbor = std::find(graph[left].begin(), graph[left].end(), right);
     if (rightsideNeighbor != graph[left].end()) {
         graph[left].erase(rightsideNeighbor);

@@ -4,85 +4,32 @@
 
 #include "read_write.hpp"
 
-/*
- * A Forsyth–Edwards Notation-like record
- */
+std::string translatePosition(Position position) {
+    char first = 'a' + static_cast<char>(position.col);
+    char second = '1' + static_cast<char>(position.row);
+    std::string result = std::string (1, first);
+    result.append(std::string(1, second));
+    return result;
+}
 
-
-//Board read() {
-//    Board board;
-//    std::string gamePosition;
-//
-//    //horizontal wall positions
-//    std::cin >> gamePosition;
-//
-//    if (gamePosition[0] != '/') {
-//        for (char c : gamePosition) {
-//            uint8_t col = cols[*i];
-//            i++;
-//            uint8_t row = *i - '0';
-//            state.addFence(true, std::make_pair(row, col));
-//        }
-//        std::cin >> gamePosition;
-//    }
-//
-//    //vertical wall positions
-//    std::cin >> gamePosition;
-//
-//    if (gamePosition[0] != '/') {
-//        for (auto i = gamePosition.begin(); i != gamePosition.end(); ++i) {
-//            uint8_t col = cols[*i];
-//            i++;
-//            uint8_t row = *i - '0';
-//            state.addFence(false, std::make_pair(row, col));
-//        }
-//        std::cin >> gamePosition;
-//    }
-//
-//    //p1 position
-//    std::cin >> gamePosition;
-//    uint8_t row = gamePosition[1] - '0';
-//    uint8_t col = cols[gamePosition[0]];
-//    state.setP1(std::make_pair(row, col));
-//
-//    //p2 position
-//    std::cin >> gamePosition;
-//    row = gamePosition[1] - '0';
-//    col = cols[gamePosition[0]];
-//    board.setP2({row, col});
-//
-//    std::cin >> gamePosition;
-//
-//    //walls
-//    std::cin >> gamePosition;
-//    board.setP1Fences(gamePosition[0] - '0');
-//    std::cin >> gamePosition;
-//    board.setP2Fences(gamePosition[0] - '0');
-//
-//    std::cin >> gamePosition;
-//
-//    //who's turn
-//    std::cin >> gamePosition;
-//    board.setActivePlayer(gamePosition[0] == '1');
-//
-//    return board;
-//}
-
-/*
- * writes current position in Forsyth–Edwards Notation-like record, e.g. "d4f4e7 / a2a8 / e4 e6 / 7 8 / 2"
- */
-
-void writePosition(const Board& board) {
-
+std::string translateFence(Position position, bool isHorizontal) {
+    std::string result = translatePosition(position);
+    if (isHorizontal) {
+        result.append("h");
+    } else {
+        result.append("v");
+    }
+    return result;
 }
 
 /*
- * prints state in ASCII notation
+ * prints board in ASCII notation
  */
-
 void printBoard(const Board& board) {
-    Position p1Pos = board.getP1();
-    Position p2Pos = board.getP2();
+//    Position p1Pos = board.getP1();
+    Position p1Pos = board.getPlayerPos(0);
+//    Position p2Pos = board.getP2();
+    Position p2Pos = board.getPlayerPos(1);
 
     const std::vector<Position>& verticalWalls = board.getVerticalFences();
     const std::vector<Position>& horizontalWalls = board.getHorizontalFences();
@@ -93,14 +40,14 @@ void printBoard(const Board& board) {
             line.append('+' + std::string(35, '-') + '+');
         } else {
             if (i % 2 == 0) {
-                for (int j = 0; j < 9; ++j) {
+                for (int j = 0; j < BOARD_SIDE_LENGTH; ++j) {
                     if (j == 0) {
                         line.append("|");
                     } else {
                         line.append("+");
                     }
-                    uint8_t wallRow = i / 2;
-                    uint8_t wallCol = j + 1;
+                    int wallRow = i / 2;
+                    int wallCol = j + 1;
                     if (std::find(horizontalWalls.cbegin(), horizontalWalls.cend(), Position(wallRow, wallCol)) != horizontalWalls.cend()
                     || std::find(horizontalWalls.cbegin(), horizontalWalls.cend(), Position(wallRow, wallCol - 1)) != horizontalWalls.cend()) {
                         line.append(std::string(3, '-'));
@@ -111,7 +58,7 @@ void printBoard(const Board& board) {
                 line.append("|");
             } else {
                 line.append("|");
-                for (int j = 0; j < 9; ++j) {
+                for (int j = 0; j < BOARD_SIDE_LENGTH; ++j) {
                     if (i == (p1Pos.row) * 2 + 1 and j == p1Pos.col) {
                         line.append(" X ");
                     } else if (i == (p2Pos.row) * 2 + 1 and j == p2Pos.col) {
@@ -122,8 +69,8 @@ void printBoard(const Board& board) {
                     if (j == 8) {
                         line.append("|");
                     } else {
-                        uint8_t wallRow = (i - 1) / 2;
-                        uint8_t rowCol = j + 1;
+                        int wallRow = (i - 1) / 2;
+                        int rowCol = j + 1;
                         if (std::find(verticalWalls.cbegin(), verticalWalls.cend(), Position(wallRow + 1, rowCol)) != verticalWalls.cend()
                         || std::find(verticalWalls.cbegin(), verticalWalls.cend(), Position(wallRow, rowCol)) != verticalWalls.cend()) {
                             line.append("|");

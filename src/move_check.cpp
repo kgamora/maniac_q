@@ -3,9 +3,9 @@
 
 #include <stack>
 
-bool isMoveValid(Board& s, std::string& move) {
+bool isMoveValid(const Board& board, std::string& move) {
 
     // что-то делаем, куда-то ходим
-    return isValidState(s);
+    return isValidState(board);
 }
 

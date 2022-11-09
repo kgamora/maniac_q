@@ -28,16 +28,22 @@ bool checkFence(const Board& currentState, Position pos, bool horizontal) {
 Board makeFence(Board boardCopy, Position pos, bool horizontal) {
     checkFence(boardCopy, pos, horizontal);
     boardCopy.addFence(pos, horizontal);
-    if (boardCopy.getActivePlayer() == 1) {
-        std::cout << "P1 hasn't any fences" << std::endl;
-        assert(boardCopy.getP1Fences() > 0);
-        boardCopy.reduceP1Fences();
+    if (boardCopy.getPlayerFences(boardCopy.getActivePlayerIndex()) == 0)
+    {
+        assert(boardCopy.getPlayerFences(boardCopy.getActivePlayerIndex()) > 0);
+        boardCopy.reducePlayerFences(boardCopy.getActivePlayerIndex());
     }
-    else if (boardCopy.getActivePlayer() == 2){
-        std::cout << "P2 hasn't any fences" << std::endl;
-        assert(boardCopy.getP2Fences() > 0);
-        boardCopy.reduceP2Fences();
-    }
+//    if (boardCopy.getActivePlayerIndex() == 0) {
+//
+//        std::cout << "P1 hasn't any fences" << std::endl;
+//        assert(boardCopy.getP1Fences() > 0);
+//        boardCopy.reduceP1Fences();
+//    }
+//    else if (boardCopy.getActivePlayerIndex() == 1){
+//        std::cout << "P2 hasn't any fences" << std::endl;
+//        assert(boardCopy.getP2Fences() > 0);
+//        boardCopy.reduceP2Fences();
+//    }
     return boardCopy;
 }
 

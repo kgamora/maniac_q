@@ -3,20 +3,20 @@
 #include <vector>
 
 bool checkMove(Board boardCopy, Position target) {
-    uint8_t dstPosInGraph = (target.row) * BOARD_SIDE_LENGTH + target.col;
-    uint8_t posInGraph = -1;
-    uint8_t oppPosInGraph = -1;
+    int dstPosInGraph = (target.row) * BOARD_SIDE_LENGTH + target.col;
+    int posInGraph = boardCopy.getPlayerPos(boardCopy.getActivePlayerIndex()).toSingleInt();
+    int oppPosInGraph = boardCopy.getPlayerPos((boardCopy.getActivePlayerIndex() + 1) % 2).toSingleInt();;
 
-    if (boardCopy.getActivePlayer() == 1) {
-        posInGraph = boardCopy.getP1().row * BOARD_SIDE_LENGTH + boardCopy.getP1().col;
-        oppPosInGraph = boardCopy.getP2().row * BOARD_SIDE_LENGTH + boardCopy.getP2().col;
+//    if (boardCopy.getActivePlayer() == 1) {
+//        posInGraph = boardCopy.getP1().row * BOARD_SIDE_LENGTH + boardCopy.getP1().col;
+//        oppPosInGraph = boardCopy.getP2().row * BOARD_SIDE_LENGTH + boardCopy.getP2().col;
+//
+//    } else if (boardCopy.getActivePlayer() == 2){
+//        posInGraph = boardCopy.getP2().row * BOARD_SIDE_LENGTH + boardCopy.getP2().col;
+//        oppPosInGraph = boardCopy.getP1().row * BOARD_SIDE_LENGTH + boardCopy.getP1().col;
+//    }
 
-    } else if (boardCopy.getActivePlayer() == 2){
-        posInGraph = boardCopy.getP2().row * BOARD_SIDE_LENGTH + boardCopy.getP2().col;
-        oppPosInGraph = boardCopy.getP1().row * BOARD_SIDE_LENGTH + boardCopy.getP1().col;
-    }
-
-    std::vector<uint8_t> goodFields = boardCopy.getGraph()[posInGraph];
+    std::vector<int> goodFields = boardCopy.getGraph()[posInGraph];
 
     // если противник не рядом с нами
     if(std::find(goodFields.begin(), goodFields.end(), oppPosInGraph) == goodFields.end()) {
@@ -37,14 +37,14 @@ bool checkMove(Board boardCopy, Position target) {
 
     // если ходим на свободные клетки рядом
     if(std::find(goodFields.begin(), goodFields.end(), dstPosInGraph) != goodFields.end()) {
-        if (boardCopy.getActivePlayer() == 1) {
-            return true;
-            //s.setP1(dst);
-            //return s;
-        } else if (boardCopy.getActivePlayer() == 2)
-        {
-            return true;
-        }
+//        if (boardCopy.getActivePlayer() == 1) {
+//            return true;
+//            //s.setP1(dst);
+//            //return s;
+//        } else if (boardCopy.getActivePlayer() == 2)
+//        {
+//            return true;
+//        }
         //s.setP2(dst);
         //return s;
         return true;
@@ -52,25 +52,30 @@ bool checkMove(Board boardCopy, Position target) {
 
     //если хотим куда-то хитро перейти
     //встаем на место соперника и пробуем оттуда перейти на нужную клетку
-    if (boardCopy.getActivePlayer() == 1) {
-        boardCopy.setP1(boardCopy.getP2());
-    }
-    else if (boardCopy.getActivePlayer() == 2)
-    {
-        boardCopy.setP2(boardCopy.getP1());
-    }
+//    if (boardCopy.getActivePlayer() == 1) {
+//        boardCopy.setP1(boardCopy.getP2());
+//    }
+//    else if (boardCopy.getActivePlayer() == 2)
+//    {
+//        boardCopy.setP2(boardCopy.getP1());
+//    }
+    boardCopy.setPlayerPos(boardCopy.getActivePlayerIndex(), boardCopy.getPlayerPos((boardCopy.getActivePlayerIndex() + 1) % 2));
+
     return checkMove(boardCopy, target);
 }
 
 Board makeMove(Board boardCopy, Position target) {
     if (checkMove(boardCopy, target)) {
-        if (boardCopy.getActivePlayer() == 1) {
-            boardCopy.setP1(target);
-            boardCopy.setActivePlayer(2);
-        } else {
-            boardCopy.setP2(target);
-            boardCopy.setActivePlayer(1);
-        }
+//        if (boardCopy.getActivePlayer() == 1) {
+//            boardCopy.setP1(target);
+//            boardCopy.setActivePlayer(2);
+//        } else {
+//            boardCopy.setP2(target);
+//            boardCopy.setActivePlayer(1);
+//        }
+        boardCopy.setPlayerPos(boardCopy.getActivePlayerIndex(), target);
+        boardCopy.setActivePlayerIndex((boardCopy.getActivePlayerIndex() + 1) % 2);
+
         return boardCopy;
     }
     std::cout << "CheckMove error" << std::endl;
