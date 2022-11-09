@@ -14,6 +14,6 @@ Board parseMove(const Board& currentState, const std::string& move) {
         bool isHorizontal = move[2] == 'h';
         return makeFence(currentState, {row, col}, isHorizontal);
     } else {
-        return makeMove(currentState, {row - 1, col - 1});
+        return makeMove(currentState, {static_cast<uint8_t>(row - 1), static_cast<uint8_t>(col - 1)});
     }
 }
