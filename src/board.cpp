@@ -3,7 +3,7 @@
 Board::Board() : p1Fences(FENCE_COUNT),
                  p2Fences(FENCE_COUNT),
                  p1(0, BOARD_SIDE_LENGTH / 2),
-                 p2(BOARD_SIDE_LENGTH, BOARD_SIDE_LENGTH / 2),
+                 p2(BOARD_SIDE_LENGTH - 1, BOARD_SIDE_LENGTH / 2),
                  graph(board_size),
                  activePlayer(1)
 {
