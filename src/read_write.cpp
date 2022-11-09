@@ -47,7 +47,7 @@ void printBoard(const Board& board) {
                         line.append("+");
                     }
                     int wallRow = i / 2;
-                    int wallCol = j + 1;
+                    int wallCol = j;
                     if (std::find(horizontalWalls.cbegin(), horizontalWalls.cend(), Position(wallRow, wallCol)) != horizontalWalls.cend()
                     || std::find(horizontalWalls.cbegin(), horizontalWalls.cend(), Position(wallRow, wallCol - 1)) != horizontalWalls.cend()) {
                         line.append(std::string(3, '-'));
@@ -69,8 +69,8 @@ void printBoard(const Board& board) {
                     if (j == 8) {
                         line.append("|");
                     } else {
-                        int wallRow = (i - 1) / 2;
-                        int rowCol = j + 1;
+                        int wallRow = i / 2 - 1;
+                        int rowCol = j;
                         if (std::find(verticalWalls.cbegin(), verticalWalls.cend(), Position(wallRow + 1, rowCol)) != verticalWalls.cend()
                         || std::find(verticalWalls.cbegin(), verticalWalls.cend(), Position(wallRow, rowCol)) != verticalWalls.cend()) {
                             line.append("|");
