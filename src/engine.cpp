@@ -6,20 +6,22 @@
 
 // EXTEND ALL THIS FUNCTIONS FOR MORE THAN 2 PLAYERS
 
-uint8_t distanceToBase(uint8_t position, uint8_t active_player) {
-    if (active_player == 1) {
-        return position / BOARD_SIDE_LENGTH;
+uint8_t distanceToBase(uint8_t playerPosition, uint8_t player) {
+    if (player == 1) {
+        return playerPosition / BOARD_SIDE_LENGTH;
     } else {
-        return ((BOARD_SIZE - 1) - position) / BOARD_SIDE_LENGTH;
+        return ((BOARD_SIZE - 1) - playerPosition) / BOARD_SIDE_LENGTH;
     }
 }
 
 // I have douts about validity of this function
-uint8_t positionDifference(uint8_t min_player_position, uint8_t max_player_position, uint8_t active_player) {
-    uint8_t position_max = distanceToBase(max_player_position, active_player);
-    uint8_t position_min = distanceToBase(min_player_position, active_player % 2 + 1);
+int8_t positionDifference(uint8_t minPlayerPosition, uint8_t maxPlayerPosition, uint8_t maxPlayer) {
+    uint8_t minPlayer = 1 + (maxPlayer) % 2;
 
-    return position_max - position_min;
+    int8_t positionMax = distanceToBase(maxPlayerPosition, maxPlayer);
+    int8_t positionMin = distanceToBase(minPlayerPosition, minPlayer);
+
+    return positionMax - positionMin;
 }
 
 uint8_t movesToNextColumn(const Board& board, uint8_t player_position, uint8_t active_player) {
@@ -61,4 +63,15 @@ uint8_t movesToNextColumn(const Board& board, uint8_t player_position, uint8_t a
     }
 
     return depth;
+}
+
+double evalPosition(const Board& board, uint8_t minPlayerPosition, uint8_t maxPlayerPosition, uint8_t maxPlayer) {
+    uint8_t minPlayer = 1 + (maxPlayer) % 2;
+
+    uint8_t f1 = distanceToBase(maxPlayerPosition, maxPlayer);
+    // int8_t !!!!!!!
+    int8_t f2 = positionDifference(minPlayerPosition, maxPlayerPosition, maxPlayer);
+    uint8_t f3 = movesToNextColumn(board, maxPlayerPosition, maxPlayer);
+    uint8_t f4 = movesToNextColumn(board, minPlayerPosition, minPlayer);
+    return 0.6 * f1 + 0.6001 * f2 + 14.45 * f3 + 6.52 * f4;
 }
