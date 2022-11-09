@@ -2,4 +2,5 @@
 
 #include "board.hpp"
 
-Board makeMove(Board s, Position target);
+bool checkMove(Board boardCopy, Position target);
+Board makeMove(Board boardCopy, Position target);
