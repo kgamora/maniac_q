@@ -112,7 +112,7 @@ Board::Board(std::istream& is) : Board() {
 }
 
 void Board::addFence(Position fence, bool horizontal) {
-//    assert(row >= 0 && row <= 8 && col >= 0 && col <= 0);
+//    assert(fence.row >= 0 && fence.row <= 7 && fence.col >= 0 && fence.col <= 7);
 
     int topLeft = fence.row * BOARD_SIDE_LENGTH + fence.col;
     int topRight = topLeft + 1;

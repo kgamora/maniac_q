@@ -7,6 +7,10 @@
 bool checkFence(const Board& currentState, Position pos, bool horizontal) {
 //    assert(currentState.getPlayerFences(currentState.getActivePlayerIndex()) > 0);
 
+    if (pos.row < 0 or pos.row > 7 or pos.col < 0 or pos.col > 7) {
+        return false;
+    }
+
     auto horizontalFences = currentState.getHorizontalFences();
     auto verticalFences = currentState.getVerticalFences();
     if (std::find(horizontalFences.begin(), horizontalFences.end(), pos) != horizontalFences.end()
