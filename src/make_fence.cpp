@@ -5,6 +5,8 @@
 #include "make_fence.hpp"
 
 bool checkFence(const Board& currentState, Position pos, bool horizontal) {
+//    assert(currentState.getPlayerFences(currentState.getActivePlayerIndex()) > 0);
+
     auto horizontalFences = currentState.getHorizontalFences();
     auto verticalFences = currentState.getVerticalFences();
     if (std::find(horizontalFences.begin(), horizontalFences.end(), pos) != horizontalFences.end()
@@ -30,20 +32,8 @@ Board makeFence(Board boardCopy, Position pos, bool horizontal) {
     boardCopy.addFence(pos, horizontal);
     if (boardCopy.getPlayerFences(boardCopy.getActivePlayerIndex()) == 0)
     {
-        assert(boardCopy.getPlayerFences(boardCopy.getActivePlayerIndex()) > 0);
         boardCopy.reducePlayerFences(boardCopy.getActivePlayerIndex());
     }
-//    if (boardCopy.getActivePlayerIndex() == 0) {
-//
-//        std::cout << "P1 hasn't any fences" << std::endl;
-//        assert(boardCopy.getP1Fences() > 0);
-//        boardCopy.reduceP1Fences();
-//    }
-//    else if (boardCopy.getActivePlayerIndex() == 1){
-//        std::cout << "P2 hasn't any fences" << std::endl;
-//        assert(boardCopy.getP2Fences() > 0);
-//        boardCopy.reduceP2Fences();
-//    }
     return boardCopy;
 }
 

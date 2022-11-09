@@ -12,7 +12,6 @@ add_executable( maniac_q
         src/make_fence.cpp
         src/engine.cpp
         src/is_valide_state.cpp
-        src/move_check.cpp
         src/read_write.cpp
         src/make_move.cpp
         src/parse_move.cpp
