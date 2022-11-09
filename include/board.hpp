@@ -7,18 +7,24 @@
 #include <iostream>
 #include <algorithm>
 
+#define BOARD_SIZE 81
+#define BOARD_SIDE_LENGTH 9
+
 struct Position {
     uint8_t row;
     uint8_t col;
 
     Position(uint8_t r, uint8_t c) : row(r), col(c) {}
 
+    friend bool operator==(const Position lhs, const Position rhs) { return lhs.row == rhs.row && lhs.col == rhs.col; }
+    friend bool operator!=(const Position lhs, const Position rhs) { return !(lhs==rhs); }
+
     std::string getNotation() const;
 };
 
 class Board {
 public:
-    static const uint8_t board_size = 81;
+    static const uint8_t board_size = BOARD_SIZE;
 
     Board();
 
