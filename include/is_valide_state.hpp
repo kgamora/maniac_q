@@ -1,5 +1,5 @@
 #pragma once
 
-#include "state.hpp"
+#include "board.hpp"
 
-bool isValidState(State& state);
+bool isValidState(const Board& board);

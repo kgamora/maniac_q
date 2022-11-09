@@ -1,12 +1,12 @@
-#include "state.hpp"
+#pragma once
+
+#include "board.hpp"
 
 #include <string>
 #include <iostream>
 #include <map>
 #include <algorithm>
 
-State read ();
-
-void writePosition (State state);
-
-void printState (State state);
+Board read();
+void writePosition(const Board& board);
+void printBoard(const Board& board);

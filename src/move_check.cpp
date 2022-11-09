@@ -3,7 +3,7 @@
 
 #include <stack>
 
-bool isMoveValid(State& s, std::string& move) {
+bool isMoveValid(Board& s, std::string& move) {
 
     // что-то делаем, куда-то ходим
     return isValidState(s);

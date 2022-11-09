@@ -1,5 +1,5 @@
 #pragma once
 
-#include "state.hpp"
+#include "board.hpp"
 
-State makeMove(State s, std::pair<uint8_t, uint8_t> dst);
+Board makeMove(Board s, Position target);

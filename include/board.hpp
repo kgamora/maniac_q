@@ -6,14 +6,19 @@
 #include <cassert>
 #include <iostream>
 #include <algorithm>
+#include <map>
 
 #define BOARD_SIZE 81
 #define BOARD_SIDE_LENGTH 9
+#define FENCE_COUNT 10
+
+static const std::map<char, uint8_t> cols = {{'a', 1}, {'b', 2}, {'c', 3}, {'d', 4}, {'e', 5}, {'f', 6}, {'g', 7}, {'h', 8}, {'i', 9},};
 
 struct Position {
     uint8_t row;
     uint8_t col;
 
+    Position() = default;
     Position(uint8_t r, uint8_t c) : row(r), col(c) {}
 
     friend bool operator==(const Position lhs, const Position rhs) { return lhs.row == rhs.row && lhs.col == rhs.col; }
@@ -27,6 +32,7 @@ public:
     static const uint8_t board_size = BOARD_SIZE;
 
     Board();
+    explicit Board(std::istream& is);
 
     void addFence(Position fence, bool horizontal);
 
@@ -57,6 +63,9 @@ private:
     uint8_t p1Fences;
     uint8_t p2Fences;
     uint8_t activePlayer;
+
+    void setP1Fences(uint8_t n) { p1Fences = n; }
+    void setP2Fences(uint8_t n) { p2Fences = n; }
 
     void deleteVerticalEdge(uint8_t top, uint8_t bottom);
     void deleteHorizontalEdge(uint8_t left, uint8_t right);

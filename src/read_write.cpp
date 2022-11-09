@@ -8,73 +8,71 @@
  * A Forsyth–Edwards Notation-like record
  */
 
-std::map<char, uint8_t> cols {{'a', 1}, {'b', 2}, {'c', 3}, {'d', 4}, {'e', 5}, {'f', 6}, {'g', 7}, {'h', 8}, {'i', 9},};
 
-State read () {
-    State state;
-    std::string gamePosition;
-
-    //horizontal wall positions
-    std::cin >> gamePosition;
-
-    if (gamePosition[0] != '/') {
-        for (auto i = gamePosition.begin(); i != gamePosition.end(); ++i) {
-            uint8_t col = cols[*i];
-            i++;
-            uint8_t row = *i - '0';
-            state.addFence(true, std::make_pair(row, col));
-        }
-        std::cin >> gamePosition;
-    }
-
-
-    //vertical wall positions
-    std::cin >> gamePosition;
-
-    if (gamePosition[0] != '/') {
-        for (auto i = gamePosition.begin(); i != gamePosition.end(); ++i) {
-            uint8_t col = cols[*i];
-            i++;
-            uint8_t row = *i - '0';
-            state.addFence(false, std::make_pair(row, col));
-        }
-        std::cin >> gamePosition;
-    }
-
-    //p1 position
-    std::cin >> gamePosition;
-    uint8_t row = gamePosition[1] - '0';
-    uint8_t col = cols[gamePosition[0]];
-    state.setP1(std::make_pair(row, col));
-
-    //p2 position
-    std::cin >> gamePosition;
-    row = gamePosition[1] - '0';
-    col = cols[gamePosition[0]];
-    state.setP2(std::make_pair(row, col));
-
-    std::cin >> gamePosition;
-
-    //walls
-    std::cin >> gamePosition;
-    state.setP1Fences(gamePosition[0] - '0');
-    std::cin >> gamePosition;
-    state.setP2Fences(gamePosition[0] - '0');
-
-    std::cin >> gamePosition;
-
-    //who's turn
-    std::cin >> gamePosition;
-    state.setActivePlayer(gamePosition[0] == '1');
-
-    return state;
-}
+//Board read() {
+//    Board board;
+//    std::string gamePosition;
+//
+//    //horizontal wall positions
+//    std::cin >> gamePosition;
+//
+//    if (gamePosition[0] != '/') {
+//        for (char c : gamePosition) {
+//            uint8_t col = cols[*i];
+//            i++;
+//            uint8_t row = *i - '0';
+//            state.addFence(true, std::make_pair(row, col));
+//        }
+//        std::cin >> gamePosition;
+//    }
+//
+//    //vertical wall positions
+//    std::cin >> gamePosition;
+//
+//    if (gamePosition[0] != '/') {
+//        for (auto i = gamePosition.begin(); i != gamePosition.end(); ++i) {
+//            uint8_t col = cols[*i];
+//            i++;
+//            uint8_t row = *i - '0';
+//            state.addFence(false, std::make_pair(row, col));
+//        }
+//        std::cin >> gamePosition;
+//    }
+//
+//    //p1 position
+//    std::cin >> gamePosition;
+//    uint8_t row = gamePosition[1] - '0';
+//    uint8_t col = cols[gamePosition[0]];
+//    state.setP1(std::make_pair(row, col));
+//
+//    //p2 position
+//    std::cin >> gamePosition;
+//    row = gamePosition[1] - '0';
+//    col = cols[gamePosition[0]];
+//    board.setP2({row, col});
+//
+//    std::cin >> gamePosition;
+//
+//    //walls
+//    std::cin >> gamePosition;
+//    board.setP1Fences(gamePosition[0] - '0');
+//    std::cin >> gamePosition;
+//    board.setP2Fences(gamePosition[0] - '0');
+//
+//    std::cin >> gamePosition;
+//
+//    //who's turn
+//    std::cin >> gamePosition;
+//    board.setActivePlayer(gamePosition[0] == '1');
+//
+//    return board;
+//}
 
 /*
  * writes current position in Forsyth–Edwards Notation-like record, e.g. "d4f4e7 / a2a8 / e4 e6 / 7 8 / 2"
  */
 
-void writePosition (State state) {
+void writePosition(const Board& board) {
 
 }
 
@@ -82,20 +80,17 @@ void writePosition (State state) {
  * prints state in ASCII notation
  */
 
-void printState (State state) {
+void printBoard(const Board& board) {
+    Position p1Pos = board.getP1();
+    Position p2Pos = board.getP2();
 
-    std::pair<uint8_t, uint8_t> p1Pos = state.getP1();
-    std::pair<uint8_t, uint8_t> p2Pos = state.getP2();
-
-    std::vector<std::pair<uint8_t, uint8_t>> verticalWalls = state.getVerticalFences();
-    std::vector<std::pair<uint8_t, uint8_t>> horizontalWalls = state.getHorizontalFences();
+    const std::vector<Position>& verticalWalls = board.getVerticalFences();
+    const std::vector<Position>& horizontalWalls = board.getHorizontalFences();
 
     for (int i = 0; i < 19; ++i) {
         std::string line;
         if (i == 0 or i == 18) {
-            line.append("+");
-            line.append(std::string(35, '-'));
-            line.append("+");
+            line.append('+' + std::string(35, '-') + '+');
         } else {
             if (i % 2 == 0) {
                 for (int j = 0; j < 9; ++j) {
@@ -106,10 +101,8 @@ void printState (State state) {
                     }
                     uint8_t wallRow = i / 2;
                     uint8_t wallCol = j + 1;
-                    std::pair<uint8_t, uint8_t> item = std::make_pair(wallRow, wallCol);
-                    std::pair<uint8_t, uint8_t> item2 = std::make_pair(wallRow, wallCol - 1);
-                    if (std::find(horizontalWalls.begin(), horizontalWalls.end(), item) != horizontalWalls.end()
-                    or std::find(horizontalWalls.begin(), horizontalWalls.end(), item2) != horizontalWalls.end()) {
+                    if (std::find(horizontalWalls.cbegin(), horizontalWalls.cend(), Position(wallRow, wallCol)) != horizontalWalls.cend()
+                    || std::find(horizontalWalls.cbegin(), horizontalWalls.cend(), Position(wallRow, wallCol - 1)) != horizontalWalls.cend()) {
                         line.append(std::string(3, '-'));
                     } else {
                         line.append(std::string(3, ' '));
@@ -119,9 +112,9 @@ void printState (State state) {
             } else {
                 line.append("|");
                 for (int j = 0; j < 9; ++j) {
-                    if (i == (p1Pos.first) * 2 + 1 and j == p1Pos.second) {
+                    if (i == (p1Pos.row) * 2 + 1 and j == p1Pos.col) {
                         line.append(" X ");
-                    } else if (i == (p2Pos.first) * 2 + 1 and j == p2Pos.second) {
+                    } else if (i == (p2Pos.row) * 2 + 1 and j == p2Pos.col) {
                         line.append(" O ");
                     } else {
                         line.append(std::string(3 , ' '));
@@ -131,10 +124,8 @@ void printState (State state) {
                     } else {
                         uint8_t wallRow = (i - 1) / 2;
                         uint8_t rowCol = j + 1;
-                        std::pair<uint8_t, uint8_t> item = std::make_pair(wallRow + 1, rowCol);
-                        std::pair<uint8_t, uint8_t> item2 = std::make_pair(wallRow, rowCol);
-                        if (std::find(verticalWalls.begin(), verticalWalls.end(), item) != verticalWalls.end()
-                        or std::find(verticalWalls.begin(), verticalWalls.end(), item2) != verticalWalls.end()) {
+                        if (std::find(verticalWalls.cbegin(), verticalWalls.cend(), Position(wallRow + 1, rowCol)) != verticalWalls.cend()
+                        || std::find(verticalWalls.cbegin(), verticalWalls.cend(), Position(wallRow, rowCol)) != verticalWalls.cend()) {
                             line.append("|");
                         } else {
                             line.append(" ");

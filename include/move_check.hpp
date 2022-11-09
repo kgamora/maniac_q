@@ -1,7 +1,7 @@
 #pragma once
 
-#include "state.hpp"
+#include "board.hpp"
 
 #include <string>
 
-bool isMoveValid(State& s, std::string& move);
+bool isMoveValid(const Board& board, std::string& move);
