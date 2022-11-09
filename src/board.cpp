@@ -42,15 +42,17 @@ Board::Board() :
     }
 }
 
-Board::Board(std::istream& is) {
+Board::Board(std::istream& is) : Board() {
     std::string gamePosition;
 
     //horizontal wall positions
     is >> gamePosition;
+
     if (gamePosition[0] != '/') {
-        for (char c : gamePosition) {
-            int col = cols.at(c++);
-            int row = c - '0';
+        for (auto i = gamePosition.begin(); i != gamePosition.end(); ++i) {
+            uint8_t col = *i - 'a';
+            i++;
+            uint8_t row = *i - '1';
             addFence(Position(row, col), true);
         }
         is >> gamePosition;
@@ -58,26 +60,29 @@ Board::Board(std::istream& is) {
 
     //vertical wall positions
     is >> gamePosition;
+
     if (gamePosition[0] != '/') {
-        for (char c : gamePosition) {
-            int col = cols.at(c++);
-            int row = c - '0';
-            addFence({row, col}, false);
+        for (auto i = gamePosition.begin(); i != gamePosition.end(); ++i) {
+            uint8_t col = *i - 'a';
+            i++;
+            uint8_t row = *i - '1';
+            addFence(Position(row, col), false);
         }
         is >> gamePosition;
     }
 
     //p1 position
     is >> gamePosition;
-    int row = gamePosition[1] - '0';
-    int col = cols.at(gamePosition[0]);
+    uint8_t row = gamePosition[1] - '1';
+    uint8_t col = gamePosition[0] - 'a';
 //    setP1({row, col});
     players[0].pos = {row, col};
 
     //p2 position
+    //p2 position
     is >> gamePosition;
-    row = gamePosition[1] - '0';
-    col = cols.at(gamePosition[0]);
+    row = gamePosition[1] - '1';
+    col = gamePosition[0] - 'a';
 //    setP2({row, col});
     players[1].pos = {row, col};
 
@@ -96,7 +101,7 @@ Board::Board(std::istream& is) {
     //who's turn
     is >> gamePosition;
 //    setActivePlayer(gamePosition[0]);
-    activePlayerIndex = gamePosition[0] + 1;
+    activePlayerIndex = gamePosition[0] - '1';
 
     players[0].isMaxPlayer = false;
     players[1].isMaxPlayer = true;
