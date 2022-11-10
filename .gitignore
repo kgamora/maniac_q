@@ -13,3 +13,4 @@ _deps
 /cmake-build-default/
 .idea
 .DS_Store
+/build/
