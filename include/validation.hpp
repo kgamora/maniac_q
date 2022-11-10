@@ -6,4 +6,5 @@ namespace Validation {
     bool isValidState(const Board& board);
     bool checkFence(const Board& board, Position pos, bool horizontal);
     bool checkMove(const Board& board, Position target);
+    bool isGameFinished(const Board& board);
 }

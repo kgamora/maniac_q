@@ -68,6 +68,8 @@ public:
     int getActivePlayerIndex() const { return activePlayerIndex; }
 
     int getMaxPlayerIndex() const { return maxPlayerIndex; }
+
+    const std::vector<Player>& getPlayers() const { return players; }
 private:
     std::vector<std::vector<int>> graph;
     std::vector<Player> players;

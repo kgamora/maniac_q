@@ -196,4 +196,14 @@ bool checkMove(const Board& board, Position target) {
     return false;
 }
 
+bool isGameFinished(const Board& board) {
+    const std::vector<Player>& players = board.getPlayers();
+
+    for (const Player& player : players) {
+        if (player.pos.row == player.targetRow) return true;
+    }
+    
+    return false;
+}
+
 } // Validation
