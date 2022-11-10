@@ -10,7 +10,7 @@
 
 // EXTEND ALL THIS FUNCTIONS FOR MORE THAN 2 PLAYERS
 
-int distanceToBase(int playerPosition, int player) {
+int Engine::distanceToBase(int playerPosition, int player) {
     if (player == 0) {
         return playerPosition / BOARD_SIDE_LENGTH;
     } else {
@@ -18,8 +18,7 @@ int distanceToBase(int playerPosition, int player) {
     }
 }
 
-// I have doubts about validity of this function
-int positionDifference(int minPlayerPosition, int maxPlayerPosition, int maxPlayer) {
+int Engine::positionDifference(int minPlayerPosition, int maxPlayerPosition, int maxPlayer) {
     int minPlayer = (1 + maxPlayer) % 2;
 
     int positionMax = distanceToBase(maxPlayerPosition, maxPlayer);
@@ -28,20 +27,23 @@ int positionDifference(int minPlayerPosition, int maxPlayerPosition, int maxPlay
     return positionMax - positionMin;
 }
 
-int movesToNextColumn(const Board& board, int player_position, int active_player) {
+int Engine::movesToNextRow(const Board& board, int player_position, int active_player) {
+    if ((active_player == 0 && player_position / 9 == 8) ||(active_player == 1 && player_position / 9 == 0)) {
+        return -1000;
+    }
     int depth = 0;
     std::queue<int > q;
-
     q.push(player_position);
     size_t nodes_on_level = q.size();
 
-    std::vector<int > visited(BOARD_SIZE, false);
+    std::vector<int> visited(BOARD_SIZE, false);
 
     while (!q.empty()) {
         while (nodes_on_level != 0) {
             int current_position = q.front();
-
+            // если ходит первый игрок
             if (active_player == 0) {
+                // то мы дошли до нужной строки в этом условии
                 if (current_position / BOARD_SIDE_LENGTH == player_position / BOARD_SIDE_LENGTH + 1) {
                     return depth;
                 }
@@ -65,103 +67,157 @@ int movesToNextColumn(const Board& board, int player_position, int active_player
         ++depth;
         nodes_on_level = q.size();
     }
-
     return depth;
 }
 
-double evalPosition(const Board& board) {
+
+int Engine::movesToOppBase(const Board& board, int player_position, int active_player) {
+
+    if ((active_player == 0 && player_position / 9 == 8) || (active_player == 1 && player_position / 9 == 0)) {
+        return -1000;
+    }
+
+    int depth = 0;
+    std::queue<int > q;
+    q.push(player_position);
+    size_t nodes_on_level = q.size();
+
+    std::vector<int> visited(BOARD_SIZE, false);
+
+    while (!q.empty()) {
+        while (nodes_on_level != 0) {
+            int current_position = q.front();
+            // если ходит первый игрок
+            if (active_player == 0) {
+                // то мы дошли до нужной строки в этом условии
+                if (current_position / BOARD_SIDE_LENGTH == 8) {
+                    return depth;
+                }
+            } else {
+                if (current_position / BOARD_SIDE_LENGTH == 0) {
+                    return depth;
+                }
+            }
+
+            for (int position : board.getGraph()[current_position]) {
+                if (!visited[position]) {
+                    q.push(position);
+                }
+            }
+
+            visited[current_position] = true;
+            q.pop();
+            --nodes_on_level;
+        }
+
+        ++depth;
+        nodes_on_level = q.size();
+    }
+    return depth;
+}
+
+
+
+
+double Engine::evalPosition(const Board& board) {
     int minPlayer = ((board.getMaxPlayerIndex()) + 1) % 2;
     int maxPlayer = board.getMaxPlayerIndex();
 
+
     int f1 = distanceToBase(board.getPlayerPos(maxPlayer).toSingleInt(), board.getMaxPlayerIndex());
-    // здесь знаковый int !!!!!!!
     int f2 = positionDifference(board.getPlayerPos(minPlayer).toSingleInt(), board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
-    int f3 = movesToNextColumn(board, board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
-    int f4 = movesToNextColumn(board, board.getPlayerPos(minPlayer).toSingleInt(), minPlayer);
-//    std::cout << "distanceToBase: " << f1 << std::endl;
-//    std::cout << "positionDifference: " << f2 << std::endl;
-//    std::cout << "movesToNextColumn(max(" << maxPlayer << ")): " << f3 << std::endl;
-//    std::cout << "movesToNextColumn(min(" << minPlayer << ")): " << f4 << std::endl;
-    return f1 + f2 + f3 - f4;
+    int f3 = movesToNextRow(board, board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
+    int f4 = movesToNextRow(board, board.getPlayerPos(minPlayer).toSingleInt(), minPlayer);
+    /*
+    std::cout << "distanceToBase: " << f1 << std::endl;
+    std::cout << "positionDifference: " << f2 << std::endl;
+    std::cout << "movesToNextRow(max(" << maxPlayer << ")): " << f3 << std::endl;
+    std::cout << "movesToNextRow(min(" << minPlayer << ")): " << f4 << std::endl;
+     */
+
+    //int f0 = distanceToBase(board.getPlayerPos(minPlayer).toSingleInt(), minPlayer);
+    //int f1 = movesToOppBase(board, board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
+    //int f2 = movesToOppBase(board, board.getPlayerPos(minPlayer).toSingleInt(), minPlayer);
+
+    return f1 + f2 - f3 + f4;
+    //return f0;
 }
 
-std::vector<Board> stateChildren(const Board& board) {
-    std::vector<Board> children;
+std::vector<std::pair<std::string, Board>> Engine::boardChildrenFast(const Board& board) {
+
+    std::vector<std::pair<std::string,  Board>> children;
+
     for (int i = 0; i < BOARD_SIDE_LENGTH; ++i) {
         for (int j = 0; j < BOARD_SIDE_LENGTH; ++j) {
-            if (Validation::checkFence(board, Position(i, j), true)) {
-                children.push_back(makeFence(board, Position(i, j), true));
+            Position pos(i, j);
+            if (Validation::checkFence(board, pos, true)) {
+                children.emplace_back(translateFence(pos, true), makeFence(board, pos, true));
             }
-            if (Validation::checkFence(board, Position(i, j), false)) {
-                children.push_back(makeFence(board, Position(i, j), false));
+            if (Validation::checkFence(board, pos, false)) {
+                children.emplace_back(translateFence(pos, false), makeFence(board, pos, false));
             }
-            if (Validation::checkMove(board, Position(i, j))) {
-                children.push_back(makeMove(board, Position(i, j)));
+            if (Validation::checkMove(board, pos)) {
+                children.emplace_back(translatePosition(pos), makeMove(board, pos));
+            }
+        }
+    }
+
+    //перебираем ходы активного игрока
+    //позиция игрока, который сейчас ходит
+    auto activePos = board.getPlayerPos(board.getActivePlayerIndex());
+    for (int i = -2; i <= 2; ++i) {
+        for (int j = -2; j <= 2; ++j) {
+            Position newPos(activePos.row + i, activePos.col + j);
+            if (Validation::checkMove(board, newPos)) {
+                children.emplace_back(translatePosition(newPos), makeMove(board, newPos));
             }
         }
     }
     return children;
 }
 
-double alpha_beta(const Board& board, int depth, double alpha, double beta, int maximizingPlayer) {
-//    static int counter = 0;
-//    ++counter;
-//    if (counter % 100 == 0)
-//        std:: cout << counter << std:: endl;
+// Алгоритм минимакса без отсечения
+std::pair<std::string, double> Engine::min_max(const Board& startBoard, int depth, bool isMax) {
+    // если depth == 0, то считаем текущую позицию
     if (depth == 0) {
-        return evalPosition(board);
-    }
-    double value;
-    if (maximizingPlayer) {
-        value = std::numeric_limits<double>::min();
-        for (const Board& child : stateChildren(board)) {
-            value = std::max(value, alpha_beta(child, depth - 1, alpha, beta, false));
-            if (value >= beta) {
-                break;
-            }
-            alpha = std::max(alpha, value);
-        }
-        return value;
-    } else {
-        value = std::numeric_limits<double>::max();
-        for (const Board& child : stateChildren(board)) {
-            value = std::min(value, alpha_beta(child, depth - 1, alpha, beta, true));
-            if (value <= alpha) {
-                break;
-            }
-            beta = std::min(beta, value);
-        }
-        return value;
-    }
-}
-
-std::string getBestMoveOnDepth(const Board& startBoard, int depth) {
-    std::vector<std::pair<std::string,  Board>> children;
-    for (int i = 0; i < BOARD_SIDE_LENGTH; ++i) {
-        for (int j = 0; j < BOARD_SIDE_LENGTH; ++j) {
-            Position pos(i, j);
-            if (Validation::checkFence(startBoard, pos, true)) {
-                children.emplace_back(translateFence(pos, true), makeFence(startBoard, pos, true));
-            }
-            if (Validation::checkFence(startBoard, pos, false)) {
-                children.emplace_back(translateFence(pos, false), makeFence(startBoard, pos, false));
-            }
-            if (Validation::checkMove(startBoard, pos)) {
-                children.emplace_back(translatePosition(pos), makeMove(startBoard, pos));
-            }
-        }
+        double evalCurPos = evalPosition(startBoard);
+        return std::make_pair("",evalCurPos);
     }
 
-    double result = std::numeric_limits<double>::min();
-    std::string res_str;
+    // если хотим проанализировать хотя бы один ход вперед
+    // получаем детей
+    auto children = boardChildrenFast(startBoard);
 
+    //массив оценок для детей
+    std::vector<double> childrenVal;
+
+    //оценка текущей позиции
+    double evalCurPosition = evalPosition(startBoard);
+
+    // проходим по массиву детей, записывая их оценки
     for (const auto& [str, board] : children) {
-        double stateEval = alpha_beta(board, depth, std::numeric_limits<double>::min(), std::numeric_limits<double>::max(), false);
-        if (stateEval > result) {
-            result = stateEval;
-            res_str = str;
-        }
+        //добавляем оценку текущего ребенка в массив
+        double evalChildPosition = min_max(board, depth - 1, !isMax).second;
+        childrenVal.push_back(evalChildPosition);
     }
 
-    return res_str;
+    /*
+    for (int i = 0; i < childrenVal.size(); ++i) {
+        std::cout << childrenVal[i] << ' ';
+    }
+    std::cout << std::endl;
+     */
+
+    //номер лучшего ребенка в списке детей
+    int bestChild = -1;
+    if (isMax) {
+        bestChild =  max_element(childrenVal.begin(), childrenVal.end()) - childrenVal.begin();
+    } else {
+        bestChild =  min_element(childrenVal.begin(), childrenVal.end()) - childrenVal.begin();
+    }
+
+    //std::cout << "Лучший ход в данной ситуации: " << std::endl;
+    //printBoard(children[bestChild].second);
+
+    return std::make_pair(children[bestChild].first, childrenVal[bestChild]);
 }
