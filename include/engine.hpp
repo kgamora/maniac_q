@@ -1,8 +1,6 @@
 #pragma once
 
 #include "engine.hpp"
-#include "make_fence.hpp"
-#include "make_move.hpp"
 #include "validation.hpp"
 #include "board.hpp"
 
@@ -12,12 +10,16 @@
 
 class Engine {
 public:
-    std::pair<std::string, double> min_max(const Board& startBoard, int depth, bool isMax);
+    std::pair<std::string, double> minMax(const Board& startBoard, int depth, bool isMax);
     double evalPosition(const Board& board);
+    static Board makeTurn(const Board& state, const std::string& turn);
+    static Board makeFence(Board board_copy, Position pos, bool horizontal);
+    static Board makeMove(Board boardCopy, Position target);
+
 private:
-    int movesToOppBase(const Board& board, int player_position, int active_player);
+    int movesToOppBase(const Board& board, int playerPosition, int activePlayer);
     int distanceToBase(int maxPlayerPosition, int maxPlayer);
     int positionDifference(int minPlayerPosition, int maxPlayerPosition, int maxPlayer);
-    int movesToNextRow(const Board& board, int player_position, int active_player);
+    int movesToNextRow(const Board& board, int playerPosition, int activePlayer);
     std::vector<std::pair<std::string, Board>> boardChildrenFast(const Board& board);
 };

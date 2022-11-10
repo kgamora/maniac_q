@@ -4,42 +4,39 @@
 
 #include "board.hpp"
 #include "game.hpp"
-#include "cstring"
 
+#include <cstring>
 #include <sstream>
 
 int main(int argc, char **argv) {
-    Mode mode;
-    char* cmode = argv[1];
-    int nextArg = 2;
-    if (strcmp(cmode, "--play") == 0) {
-        mode = Mode::play;
-    } else if (strcmp(cmode, "--engine") == 0) {
-        mode = Mode::engine;
-    } else if (strcmp(cmode, "--interactive") == 0) {
-        mode = Mode::interactive;
-    } else {
-        std::cout << "unknown argument: " << cmode;
-        return 1;
-    }
+//    if (argc == 1) {
+//        std::cout << "Недостаточно аргументов!" << std::endl;
+//    }
 
-    BoardInit boardInit;
+    Mode mode = Mode::play;
+    InitType init = InitType::fromStdIn;
+    int playerId = 0;
     std::string path;
-    if (strcmp(argv[nextArg], "--from-file") == 0) {
-        nextArg++;
-        path = argv[nextArg];
-        boardInit = BoardInit::fromFile;
-    } else {
-        nextArg++;
-        boardInit = BoardInit::fromStdIn;
-    }
-    int player;
-    if (strcmp(argv[nextArg], "--player") == 0) {
-        nextArg++;
-        player = argv[nextArg][0] - '1';
+
+    for (int i = 1; i < argc; ++i) {
+        if (strcmp(argv[i], "--play") == 0) {
+            mode = Mode::play;
+        } else if (strcmp(argv[i], "--engine") == 0) {
+            mode = Mode::engine;
+        } else if (strcmp(argv[i], "--interactive") == 0) {
+            mode = Mode::interactive;
+        } else if (strcmp(argv[i], "--from-file") == 0) {
+            path = argv[++i];
+            init = InitType::fromFile;
+        } else if (strcmp(argv[i], "--player") == 0) {
+            playerId = argv[++i][0] - '1';
+        } else {
+            std::cout << "Неизвестный аргумент!" << std::endl;
+            return -1;
+        }
+
     }
 
-    Game game(mode, boardInit, path, player);
-
+    Game game(mode, init, playerId, path);
     game.run();
 }

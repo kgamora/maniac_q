@@ -3,11 +3,9 @@
 //
 #include "game.hpp"
 #include "validation.hpp"
-#include "make_move.hpp"
-#include "make_fence.hpp"
 
-Game::Game(Mode mode, BoardInit boardInit, const std::string& path, int player) : mode_(mode) {
-    if (boardInit == fromFile) {
+Game::Game(Mode mode, InitType init, int player, const std::string& path) : mode_(mode), currentState_(player) {
+    if (init == fromFile) {
         std::fstream fileNotation(path, std::fstream::in);
         currentState_ = Board(fileNotation);
     }
@@ -29,7 +27,7 @@ void Game::run() {
 }
 
 void Game::runEngine() {
-    auto [result_str, result_double] = eng_.min_max(currentState_, SEARCH_DEPTH, true);
+    auto [result_str, result_double] = eng_.minMax(currentState_, SEARCH_DEPTH, true);
     std::cout << result_str;
 }
 
@@ -37,19 +35,19 @@ void Game::runEngineInteractive() {
     while (!Validation::isGameFinished(currentState_)) {
         bool playerTurn = currentState_.getActivePlayerIndex() == currentState_.getMaxPlayerIndex();
         std::string turn;
-        std::string prompt = playerTurn ? PLAYER_MOVE_PROMPT : PLAYER2_MOVE_PROMPT;
+        std::string prompt = playerTurn ? "Введите ваш ход: " : "Введите ход противника: ";
         if (playerTurn) {
-            auto [turn_str, turn_double] = eng_.min_max(currentState_, SEARCH_DEPTH, true);
-            std::cout << BEST_MOVE << turn_str << std::endl;
+            auto [turn_str, turn_double] = eng_.minMax(currentState_, SEARCH_DEPTH, true);
+            std::cout << "Движок рекомендует ход: " << turn_str << std::endl;
         }
         std::cout << prompt << std::endl;
         std::cin >> turn;
         if (!Validation::checkTurn(currentState_, turn)) {
-            std::cout << BAD_TURN << std::endl;
+            std::cout << "Незаконный или невалидный ход: " << std::endl;
             continue;
         }
-        currentState_ = makeTurn(currentState_, turn);
-        printBoard(currentState_);
+        currentState_ = Engine::makeTurn(currentState_, turn);
+        currentState_.print();
     }
 }
 
@@ -57,31 +55,20 @@ void Game::runPlay() {
     while (!Validation::isGameFinished(currentState_)) {
         bool playerTurn = currentState_.getActivePlayerIndex() != currentState_.getMaxPlayerIndex();
         std::string turn;
-        std::string prompt = PLAYER_MOVE_PROMPT;
+//        std::string prompt = "Введите ваш ход: ";
         if (playerTurn) {
-            std::cout << prompt << std::endl;
+            std::cout << "Введите ваш ход: " << std::endl;
             std::cin >> turn;
             if (!Validation::checkTurn(currentState_, turn)) {
-                std::cout << BAD_TURN << std::endl;
+                std::cout << "Незаконный или невалидный ход: " << std::endl;
                 continue;
             }
         } else {
-            auto [turn_str, turn_double] = eng_.min_max(currentState_, SEARCH_DEPTH, true);
+            auto [turn_str, turn_double] = eng_.minMax(currentState_, SEARCH_DEPTH, true);
             turn = turn_str;
-            std::cout << BOT_MOVES << turn_str << std::endl;
+            std::cout << "Бот сделал ход: " << turn_str << std::endl;
         }
-        currentState_ = makeTurn(currentState_, turn);
-        printBoard(currentState_);
+        currentState_ = Engine::makeTurn(currentState_, turn);
+        currentState_.print();
     }
 }
-
-Board Game::makeTurn(const Board& state, const std::string& turn) {
-    int row = turn[1] - '1';
-    int col = turn[0] - 'a';
-    if (turn.size() == 2) {
-        return makeMove(state, {row, col});
-    } else {
-        return makeFence(state, {row, col}, turn[2] == 'h');
-    }
-}
-

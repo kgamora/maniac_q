@@ -14,11 +14,7 @@ include_directories(include)
 add_executable( maniac_q
         src/main.cpp
         src/board.cpp
-        src/make_fence.cpp
         src/engine.cpp
         src/validation.cpp
-        src/read_write.cpp
-        src/make_move.cpp
-        src/parse_move.cpp
         src/game.cpp
         )

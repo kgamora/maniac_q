@@ -48,14 +48,16 @@ bool isValidState(const Board &board) {
         int iRow = horizontalFences[i].row;
         int iCol = horizontalFences[i].col;
         
-        bool outOfBorder = iRow > 7 || iRow < 0 || iCol > 7 || iCol < 0;
+        bool outOfBorder = (iRow > BOARD_SIDE_LENGTH - 2) || (iRow < 0) || (iCol > BOARD_SIDE_LENGTH - 2) || (iCol < 0);
         if (outOfBorder) return false;
 
         for (int j = i + 1; j < horizontalFences.size(); j++) {
             int jRow = horizontalFences[j].row;
             int jCol = horizontalFences[j].col;
 
-            if (jRow == iRow && (iCol == jCol + 1 || iCol == jCol - 1 || iCol == jCol)) return false;
+            if (jRow == iRow && (iCol == jCol + 1 || iCol == jCol - 1 || iCol == jCol)) {
+                return false;
+            }
         }
     }
 
@@ -63,15 +65,15 @@ bool isValidState(const Board &board) {
     for (int i = 0; i < verticalFences.size(); ++i) {
         int iRow = verticalFences[i].row;
         int iCol = verticalFences[i].col;
-        
-        bool outOfBorder = iRow > 7 || iRow < 0 || iCol > 7 || iCol < 0;
+
+        bool outOfBorder = (iRow > BOARD_SIDE_LENGTH - 2) || (iRow < 0) || (iCol > BOARD_SIDE_LENGTH - 2) || (iCol < 0);
         if (outOfBorder) return false;
 
         for (int j = i + 1; j < verticalFences.size(); j++) {
             int jRow = verticalFences[j].row;
             int jCol = verticalFences[j].col;
 
-            if (jCol == iCol && (iRow == jRow + 1 || iRow == jRow - 1 || iRow == jRow)){
+            if (jCol == iCol && (iRow == jRow + 1 || iRow == jRow - 1 || iRow == jRow)) {
                 return false;
             }
         }
@@ -93,10 +95,9 @@ bool isValidState(const Board &board) {
             dfs(board.getGraph(), board.getPlayerPos(1).toSingleInt(), 0));
 }
 
-bool checkFence(const Board &board, Position pos, bool horizontal) {
-
-    // 7 потому, что нельзя поставить доску на край 8
-    if (pos.row < 0 or pos.row > 7 or pos.col < 0 or pos.col > 7) {
+bool checkFence(const Board& board, Position pos, bool horizontal) {
+    // BOARD_SIDE_LENGTH - 2 потому, что нельзя поставить доску на край
+    if ((pos.row < 0) || (pos.row > BOARD_SIDE_LENGTH - 2) || (pos.col < 0) || (pos.col > BOARD_SIDE_LENGTH - 2)) {
         return false;
     }
 
@@ -108,18 +109,16 @@ bool checkFence(const Board &board, Position pos, bool horizontal) {
     Board boardCopy = board;
     boardCopy.addFence(pos, horizontal);
 
-    //return true;
     return isValidState(boardCopy);
 }
 
 bool checkMove(const Board& board, Position target) {
-
     //если позиция-цель лежит вне поля
-    if (target.col > 8 || target.col < 0 || target.row < 0 || target.row > 8) {
+    if ((target.col > BOARD_SIDE_LENGTH - 1) || (target.col < 0) || (target.row < 0) || (target.row > BOARD_SIDE_LENGTH - 1)) {
         return false;
     }
 
-    int dstPosInGraph = (target.row) * BOARD_SIDE_LENGTH + target.col;
+    int dstPosInGraph = target.row * BOARD_SIDE_LENGTH + target.col;
     int posInGraph = board.getPlayerPos(board.getActivePlayerIndex()).toSingleInt();
     int oppPosInGraph = board.getPlayerPos((board.getActivePlayerIndex() + 1) % 2).toSingleInt();
 
@@ -235,33 +234,31 @@ bool checkMove(const Board& board, Position target) {
 }
 
 bool isGameFinished(const Board& board) {
-    const std::vector<Player>& players = board.getPlayers();
-
-    for (const Player& player : players) {
+    for (const Player& player : board.getPlayers()) {
         if (player.pos.row == player.targetRow) return true;
     }
     
     return false;
 }
 
-bool checkTurn(const Board &board, const std::string &turn) {
+bool checkTurn(const Board& board, const std::string& turn) {
     if (!(turn.size() == 2 or turn.size() == 3)) {
         return false;
     }
     int row = turn[1] - '1';
     int col = turn[0] - 'a';
-    if (row < 0 or row > 8 or col < 0 or col > 8) {
+    if ((row < 0) || (row > BOARD_SIDE_LENGTH - 1) || (col < 0) || (col > BOARD_SIDE_LENGTH - 1)) {
         return false;
     }
     if (turn.size() == 3) {
-        if (turn[2] != 'h' and turn[2] != 'v') {
+        if (turn[2] != 'h' && turn[2] != 'v') {
             return false;
         }
         if (!checkFence(board, {row, col}, turn[2] == 'h')) {
             return false;
         }
     }
-    if (turn.size() == 2 and not checkMove(board, {row, col})) {
+    if (turn.size() == 2 && !checkMove(board, {row, col})) {
         return false;
     }
     return true;
