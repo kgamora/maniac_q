@@ -104,27 +104,6 @@ bool checkFence(const Board &board, Position pos, bool horizontal) {
         return false;
     }
 
-//    auto horizontalFences = board.getHorizontalFences();
-//    auto verticalFences = board.getVerticalFences();
-//    if (std::find(horizontalFences.begin(), horizontalFences.end(), pos) != horizontalFences.end()
-//        || std::find(verticalFences.begin(), verticalFences.end(), pos) != verticalFences.end()) {
-//        return false;
-//    }
-//
-//    if (horizontal) {
-//        if (std::find(horizontalFences.begin(), horizontalFences.end(), Position(pos.row, pos.col - 1)) !=
-//            horizontalFences.end()
-//            || std::find(horizontalFences.begin(), horizontalFences.end(), Position(pos.row, pos.col + 1)) !=
-//               horizontalFences.end()) {
-//            return false;
-//        }
-//    } else if (std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row - 1, pos.col)) !=
-//               verticalFences.end()
-//               || std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row + 1, pos.col)) !=
-//                  verticalFences.end()) {
-//        return false;
-//    }
-
     //ПРОВЕРКА ВАЛИДНОСТИ ПОЗИЦИИ
     Board boardCopy = board;
     boardCopy.addFence(pos, horizontal);
