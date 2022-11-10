@@ -67,6 +67,7 @@ void Game::runPlay() {
             }
         } else {
             auto [turn_str, turn_double] = eng_.min_max(currentState_, 1, true);
+            turn = turn_str;
             std::cout << BOT_MOVES << turn_str << std::endl;
         }
         currentState_ = makeTurn(currentState_, turn);
