@@ -15,4 +15,5 @@ add_executable( maniac_q
         src/read_write.cpp
         src/make_move.cpp
         src/parse_move.cpp
+        src/game.cpp
         )
