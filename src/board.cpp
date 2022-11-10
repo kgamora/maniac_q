@@ -154,3 +154,8 @@ void Board::deleteHorizontalEdge(int left, int right) {
         graph[right].erase(leftsideNeighbor);
     }
 }
+
+void Board::setMaxPlayerIndex(int index) {
+    maxPlayerIndex = index;
+    players[0].isMaxPlayer = index == 0;
+}

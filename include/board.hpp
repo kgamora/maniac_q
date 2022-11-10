@@ -70,6 +70,7 @@ public:
     int getMaxPlayerIndex() const { return maxPlayerIndex; }
 
     const std::vector<Player>& getPlayers() const { return players; }
+    void setMaxPlayerIndex(int index);
 private:
     std::vector<std::vector<int>> graph;
     std::vector<Player> players;
