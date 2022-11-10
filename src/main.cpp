@@ -16,5 +16,5 @@ int main() {
     printBoard(board);
     assert(Validation::isValidState(board));
     std::string bestMove = getBestMoveOnDepth(board, 1);
-    std::cout << "лучший ход: " << bestMove;
+    std::cout << "лучший ход: " << bestMove << std::endl;
 }

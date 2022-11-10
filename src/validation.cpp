@@ -30,9 +30,63 @@ bool dfs(const std::vector<std::vector<int>>& graph, int start, int finish) {
 namespace Validation {
 
 bool isValidState(const Board &board) {
-    // Добавить проверки позиции пешек
+    const std::vector<Player>& players = board.getPlayers();
+
+    // Проверки позиции пешек
+    for (int i = 0; i < players.size(); ++i) {
+        for (int j = i + 1; j < players.size(); j++) {
+            if (players[i].pos == players[j].pos) return false;
+        }
+    }
+
     // Добавить проверки позиции досок
+    const std::vector<Position>& horizontalFences = board.getHorizontalFences();
+    const std::vector<Position>& verticalFences = board.getVerticalFences();
+
+    // Проверка строк
+    for (int i = 0; i < horizontalFences.size(); ++i) {
+        int iRow = horizontalFences[i].row;
+        int iCol = horizontalFences[i].col;
+        
+        bool outOfBorder = iRow > 7 || iRow < 0 || iCol > 7 || iCol < 0;
+        if (outOfBorder) return false;
+
+        for (int j = i + 1; j < horizontalFences.size(); j++) {
+            int jRow = horizontalFences[j].col;
+            int jCol = horizontalFences[j].col;
+
+            if (jRow == iRow && (iCol == jCol + 1 || iCol == jCol - 1 || iCol == jCol)) return false;
+        }
+    }
+
+    // Проверка колонок
+    for (int i = 0; i < verticalFences.size(); ++i) {
+        int iRow = verticalFences[i].row;
+        int iCol = verticalFences[i].col;
+        
+        bool outOfBorder = iRow > 7 || iRow < 0 || iCol > 7 || iCol < 0;
+        if (outOfBorder) return false;
+
+        for (int j = i + 1; j < verticalFences.size(); j++) {
+            int jRow = verticalFences[j].col;
+            int jCol = verticalFences[j].col;
+
+            if (jCol == iCol && (iRow == jRow + 1 || iRow == jRow - 1 || iRow == jRow)) return false;
+        }
+    }
+
+    // Проверка непересечения горизонтальных и вертикальных fences
+    for (const Position& hFence : horizontalFences) {
+        for (const Position& vFence : verticalFences) {
+            if (hFence == vFence) return false;
+        }
+    }
+
     // Добавить проверки количества досок
+    for (const Player& player : players) {
+        if (player.fenceCount < 0) return false;
+    }
+
     return (dfs(board.getGraph(), board.getPlayerPos(0).toSingleInt(), BOARD_SIDE_LENGTH - 1) &&
             dfs(board.getGraph(), board.getPlayerPos(1).toSingleInt(), 0));
 }
