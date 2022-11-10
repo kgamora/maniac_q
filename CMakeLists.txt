@@ -11,7 +11,7 @@ add_executable( maniac_q
         src/board.cpp
         src/make_fence.cpp
         src/engine.cpp
-        src/is_valide_state.cpp
+        src/validation.cpp
         src/read_write.cpp
         src/make_move.cpp
         src/parse_move.cpp

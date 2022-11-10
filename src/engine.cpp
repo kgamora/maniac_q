@@ -1,6 +1,7 @@
 #include "engine.hpp"
 #include "make_fence.hpp"
 #include "make_move.hpp"
+#include "validation.hpp"
 
 #include <vector>
 #include <queue>
@@ -88,13 +89,13 @@ std::vector<Board> stateChildren(const Board& board) {
     std::vector<Board> children;
     for (int i = 0; i < BOARD_SIDE_LENGTH; ++i) {
         for (int j = 0; j < BOARD_SIDE_LENGTH; ++j) {
-            if (checkFence(board, Position(i, j), true)) {
+            if (Validation::checkFence(board, Position(i, j), true)) {
                 children.push_back(makeFence(board, Position(i, j), true));
             }
-            if (checkFence(board, Position(i, j), false)) {
+            if (Validation::checkFence(board, Position(i, j), false)) {
                 children.push_back(makeFence(board, Position(i, j), false));
             }
-            if (checkMove(board, Position(i, j))) {
+            if (Validation::checkMove(board, Position(i, j))) {
                 children.push_back(makeMove(board, Position(i, j)));
             }
         }
@@ -139,13 +140,13 @@ std::string getBestMoveOnDepth(const Board& startBoard, int depth) {
     for (int i = 0; i < BOARD_SIDE_LENGTH; ++i) {
         for (int j = 0; j < BOARD_SIDE_LENGTH; ++j) {
             Position pos(i, j);
-            if (checkFence(startBoard, pos, true)) {
+            if (Validation::checkFence(startBoard, pos, true)) {
                 children.emplace_back(translateFence(pos, true), makeFence(startBoard, pos, true));
             }
-            if (checkFence(startBoard, pos, false)) {
+            if (Validation::checkFence(startBoard, pos, false)) {
                 children.emplace_back(translateFence(pos, false), makeFence(startBoard, pos, false));
             }
-            if (checkMove(startBoard, pos)) {
+            if (Validation::checkMove(startBoard, pos)) {
                 children.emplace_back(translatePosition(pos), makeMove(startBoard, pos));
             }
         }
