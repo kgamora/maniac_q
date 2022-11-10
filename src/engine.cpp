@@ -10,16 +10,16 @@
 // EXTEND ALL THIS FUNCTIONS FOR MORE THAN 2 PLAYERS
 
 int distanceToBase(int playerPosition, int player) {
-    if (player == 1) {
+    if (player == 0) {
         return playerPosition / BOARD_SIDE_LENGTH;
     } else {
         return ((BOARD_SIZE - 1) - playerPosition) / BOARD_SIDE_LENGTH;
     }
 }
 
-// I have douts about validity of this function
+// I have doubts about validity of this function
 int positionDifference(int minPlayerPosition, int maxPlayerPosition, int maxPlayer) {
-    int minPlayer = 1 + (maxPlayer) % 2;
+    int minPlayer = (1 + maxPlayer) % 2;
 
     int positionMax = distanceToBase(maxPlayerPosition, maxPlayer);
     int positionMin = distanceToBase(minPlayerPosition, minPlayer);

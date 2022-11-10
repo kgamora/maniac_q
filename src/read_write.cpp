@@ -46,10 +46,11 @@ void printBoard(const Board& board) {
                     } else {
                         line.append("+");
                     }
-                    int wallRow = i / 2;
+                    //int wallRow = i / 2;
+                    int wallRow = i / 2 - 1;
                     int wallCol = j;
                     if (std::find(horizontalWalls.cbegin(), horizontalWalls.cend(), Position(wallRow, wallCol)) != horizontalWalls.cend()
-                    || std::find(horizontalWalls.cbegin(), horizontalWalls.cend(), Position(wallRow, wallCol - 1)) != horizontalWalls.cend()) {
+                        || std::find(horizontalWalls.cbegin(), horizontalWalls.cend(), Position(wallRow, wallCol - 1)) != horizontalWalls.cend()) {
                         line.append(std::string(3, '-'));
                     } else {
                         line.append(std::string(3, ' '));
@@ -72,7 +73,7 @@ void printBoard(const Board& board) {
                         int wallRow = i / 2 - 1;
                         int rowCol = j;
                         if (std::find(verticalWalls.cbegin(), verticalWalls.cend(), Position(wallRow + 1, rowCol)) != verticalWalls.cend()
-                        || std::find(verticalWalls.cbegin(), verticalWalls.cend(), Position(wallRow, rowCol)) != verticalWalls.cend()) {
+                            || std::find(verticalWalls.cbegin(), verticalWalls.cend(), Position(wallRow, rowCol)) != verticalWalls.cend()) {
                             line.append("|");
                         } else {
                             line.append(" ");
@@ -83,4 +84,9 @@ void printBoard(const Board& board) {
         }
         std::cout << line << std::endl;
     }
+
+    std::cout << "Ход игрока: " << board.getActivePlayerIndex() + 1 << std::endl;
+    std::cout << "Количество досок у игрока 1: " << board.getPlayerFences(0) << std::endl;
+    std::cout << "Количество досок у игрока 2: " << board.getPlayerFences(1) << std::endl;
+    std::cout << std::endl;
 }
