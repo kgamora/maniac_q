@@ -100,6 +100,10 @@ bool checkFence(const Board &board, Position pos, bool horizontal) {
         return false;
     }
 
+    if (board.getPlayers()[board.getActivePlayerIndex()].fenceCount == 0) {
+        return false;
+    }
+
     auto horizontalFences = board.getHorizontalFences();
     auto verticalFences = board.getVerticalFences();
     if (std::find(horizontalFences.begin(), horizontalFences.end(), pos) != horizontalFences.end()
@@ -188,7 +192,7 @@ bool checkMove(const Board& board, Position target) {
     }
 
     //если хотим перейти через клетку в направлении строки 8
-    if (activePos.col == target.col && activePos.row == target.row + 2) {
+    if (activePos.col == target.col && activePos.row == target.row - 2) {
         if (oppPos.col != activePos.col || oppPos.row != activePos.row + 1) {
             return false;
         }

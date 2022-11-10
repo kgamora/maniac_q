@@ -124,10 +124,10 @@ double Engine::evalPosition(const Board& board) {
     int maxPlayer = board.getMaxPlayerIndex();
 
 
-    int f1 = distanceToBase(board.getPlayerPos(maxPlayer).toSingleInt(), board.getMaxPlayerIndex());
-    int f2 = positionDifference(board.getPlayerPos(minPlayer).toSingleInt(), board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
-    int f3 = movesToNextRow(board, board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
-    int f4 = movesToNextRow(board, board.getPlayerPos(minPlayer).toSingleInt(), minPlayer);
+//    int f1 = distanceToBase(board.getPlayerPos(maxPlayer).toSingleInt(), board.getMaxPlayerIndex());
+//    int f2 = positionDifference(board.getPlayerPos(minPlayer).toSingleInt(), board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
+//    int f3 = movesToNextRow(board, board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
+//    int f4 = movesToNextRow(board, board.getPlayerPos(minPlayer).toSingleInt(), minPlayer);
     /*
     std::cout << "distanceToBase: " << f1 << std::endl;
     std::cout << "positionDifference: " << f2 << std::endl;
@@ -136,11 +136,10 @@ double Engine::evalPosition(const Board& board) {
      */
 
     //int f0 = distanceToBase(board.getPlayerPos(minPlayer).toSingleInt(), minPlayer);
-    //int f1 = movesToOppBase(board, board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
-    //int f2 = movesToOppBase(board, board.getPlayerPos(minPlayer).toSingleInt(), minPlayer);
+    int f1 = movesToOppBase(board, board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
+    int f2 = movesToOppBase(board, board.getPlayerPos(minPlayer).toSingleInt(), minPlayer);
 
-    return f1 + f2 - f3 + f4;
-    //return f0;
+    return f2 - f1;
 }
 
 std::vector<std::pair<std::string, Board>> Engine::boardChildrenFast(const Board& board) {
