@@ -3,6 +3,8 @@
 //
 #include "game.hpp"
 #include "validation.hpp"
+#include "make_move.hpp"
+#include "make_fence.hpp"
 
 Game::Game(Mode mode, BoardInit boardInit, const std::string& path, int player) : mode_(mode) {
     if (boardInit == fromFile) {
@@ -42,7 +44,7 @@ void Game::runEngineInteractive() {
         }
         std::cout << prompt << std::endl;
         std::cin >> turn;
-        if (!Validation::checkTurn(turn)) {
+        if (!Validation::checkTurn(currentState_, turn)) {
             std::cout << BAD_TURN << std::endl;
             continue;
         }
@@ -59,7 +61,7 @@ void Game::runPlay() {
         if (playerTurn) {
             std::cout << prompt << std::endl;
             std::cin >> turn;
-            if (!Validation::checkTurn(turn)) {
+            if (!Validation::checkTurn(currentState_, turn)) {
                 std::cout << BAD_TURN << std::endl;
                 continue;
             }
@@ -69,6 +71,16 @@ void Game::runPlay() {
         }
         currentState_ = makeTurn(currentState_, turn);
         printBoard(currentState_);
+    }
+}
+
+Board Game::makeTurn(const Board& state, const std::string& turn) {
+    int row = turn[1] - '1';
+    int col = turn[0] - 'a';
+    if (turn.size() == 2) {
+        return makeMove(state, {row, col});
+    } else {
+        return makeFence(state, {row, col}, turn[2] == 'h');
     }
 }
 

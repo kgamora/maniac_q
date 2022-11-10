@@ -7,4 +7,5 @@ namespace Validation {
     bool checkFence(const Board& board, Position pos, bool horizontal);
     bool checkMove(const Board& board, Position target);
     bool isGameFinished(const Board& board);
+    bool checkTurn(const Board& board, const std::string& turn);
 }

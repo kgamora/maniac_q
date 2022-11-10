@@ -32,6 +32,7 @@ private:
     void runEngine();
     void runEngineInteractive();
     void runPlay();
+    Board makeTurn(const Board& state, const std::string& turn);
 
     Mode mode_;
     Board currentState_;

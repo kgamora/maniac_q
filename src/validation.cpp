@@ -1,5 +1,6 @@
 #include "board.hpp"
 #include "validation.hpp"
+#include "read_write.hpp"
 
 #include <stack>
 #include <vector>
@@ -259,5 +260,28 @@ bool isGameFinished(const Board& board) {
     
     return false;
 }
+
+    bool checkTurn(const Board &board, const std::string &turn) {
+        if (!(turn.size() == 2 or turn.size() == 3)) {
+            return false;
+        }
+        int row = turn[1] - '1';
+        int col = turn[0] - 'a';
+        if (row < 0 or row > 8 or col < 0 or col > 8) {
+            return false;
+        }
+        if (turn.size() == 3) {
+            if (turn[2] != 'h' and turn[2] != 'v') {
+                return false;
+            }
+            if (!checkFence(board, {row, col}, turn[2] == 'h')) {
+                return false;
+            }
+        }
+        if (turn.size() == 2 and not checkMove(board, {row, col})) {
+            return false;
+        }
+        return true;
+    }
 
 } // Validation
