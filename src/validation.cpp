@@ -97,38 +97,33 @@ bool checkFence(const Board &board, Position pos, bool horizontal) {
 
     // 7 потому, что нельзя поставить доску на край 8
     if (pos.row < 0 or pos.row > 7 or pos.col < 0 or pos.col > 7) {
-        std::cout << "sdlmkk1" << std::endl;
         return false;
     }
 
     if (board.getPlayers()[board.getActivePlayerIndex()].fenceCount == 0) {
-        std::cout << "sdlmkk2" << std::endl;
         return false;
     }
 
-    auto horizontalFences = board.getHorizontalFences();
-    auto verticalFences = board.getVerticalFences();
-    if (std::find(horizontalFences.begin(), horizontalFences.end(), pos) != horizontalFences.end()
-        || std::find(verticalFences.begin(), verticalFences.end(), pos) != verticalFences.end()) {
-        std::cout << "sdlmkk3" << std::endl;
-        return false;
-    }
-
-    if (horizontal) {
-        if (std::find(horizontalFences.begin(), horizontalFences.end(), Position(pos.row, pos.col - 1)) !=
-            horizontalFences.end()
-            || std::find(horizontalFences.begin(), horizontalFences.end(), Position(pos.row, pos.col + 1)) !=
-               horizontalFences.end()) {
-            std::cout << "sdlmkk4" << std::endl;
-            return false;
-        }
-    } else if (std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row - 1, pos.col)) !=
-               verticalFences.end()
-               || std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row + 1, pos.col)) !=
-                  verticalFences.end()) {
-        std::cout << "sdlmkk5" << std::endl;
-        return false;
-    }
+//    auto horizontalFences = board.getHorizontalFences();
+//    auto verticalFences = board.getVerticalFences();
+//    if (std::find(horizontalFences.begin(), horizontalFences.end(), pos) != horizontalFences.end()
+//        || std::find(verticalFences.begin(), verticalFences.end(), pos) != verticalFences.end()) {
+//        return false;
+//    }
+//
+//    if (horizontal) {
+//        if (std::find(horizontalFences.begin(), horizontalFences.end(), Position(pos.row, pos.col - 1)) !=
+//            horizontalFences.end()
+//            || std::find(horizontalFences.begin(), horizontalFences.end(), Position(pos.row, pos.col + 1)) !=
+//               horizontalFences.end()) {
+//            return false;
+//        }
+//    } else if (std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row - 1, pos.col)) !=
+//               verticalFences.end()
+//               || std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row + 1, pos.col)) !=
+//                  verticalFences.end()) {
+//        return false;
+//    }
 
     //ПРОВЕРКА ВАЛИДНОСТИ ПОЗИЦИИ
     Board boardCopy = board;
