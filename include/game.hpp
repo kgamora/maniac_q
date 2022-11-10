@@ -36,4 +36,5 @@ private:
 
     Mode mode_;
     Board currentState_;
+    Engine eng_;
 };

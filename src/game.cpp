@@ -29,8 +29,8 @@ void Game::run() {
 }
 
 void Game::runEngine() {
-    std::string result = getBestMoveOnDepth(currentState_, 1);
-    std::cout << result;
+    auto [result_str, result_double] = eng_.min_max(currentState_, 1, true);
+    std::cout << result_str;
 }
 
 void Game::runEngineInteractive() {
@@ -39,8 +39,8 @@ void Game::runEngineInteractive() {
         std::string turn;
         std::string prompt = playerTurn ? PLAYER_MOVE_PROMPT : PLAYER2_MOVE_PROMPT;
         if (playerTurn) {
-            turn = getBestMoveOnDepth(currentState_, 1);
-            std::cout << BEST_MOVE << turn << std::endl;
+            auto [turn_str, turn_double] = eng_.min_max(currentState_, 1, true);
+            std::cout << BEST_MOVE << turn_str << std::endl;
         }
         std::cout << prompt << std::endl;
         std::cin >> turn;
@@ -66,8 +66,8 @@ void Game::runPlay() {
                 continue;
             }
         } else {
-            turn = getBestMoveOnDepth(currentState_, 1);
-            std::cout << BOT_MOVES << turn << std::endl;
+            auto [turn_str, turn_double] = eng_.min_max(currentState_, 1, true);
+            std::cout << BOT_MOVES << turn_str << std::endl;
         }
         currentState_ = makeTurn(currentState_, turn);
         printBoard(currentState_);
