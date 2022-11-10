@@ -3,7 +3,6 @@
 
 #include <stack>
 #include <vector>
-#include <cstdint>
 
 bool dfs(const std::vector<std::vector<int>>& graph, int start, int finish) {
     std::vector<int> visited(BOARD_SIZE, false);
@@ -28,84 +27,79 @@ bool dfs(const std::vector<std::vector<int>>& graph, int start, int finish) {
     return false;
 }
 
-bool Validation::isValidState(const Board& board) {
-//    int p1_position = board.getP1().row * BOARD_SIDE_LENGTH + board.getP1().col;
-//    int p2_position = board.getP2().row * BOARD_SIDE_LENGTH + board.getP2().col;
+namespace Validation {
+
+bool isValidState(const Board &board) {
     // Добавить проверки позиции пешек
     // Добавить проверки позиции досок
     // Добавить проверки количества досок
-    return (dfs(board.getGraph(), board.getPlayerPos(0).toSingleInt(), BOARD_SIDE_LENGTH - 1) && dfs(board.getGraph(), board.getPlayerPos(1).toSingleInt(), 0));
+    return (dfs(board.getGraph(), board.getPlayerPos(0).toSingleInt(), BOARD_SIDE_LENGTH - 1) &&
+            dfs(board.getGraph(), board.getPlayerPos(1).toSingleInt(), 0));
 }
 
-// Исправить currentState -> currentBoard или типа того
-bool Validation::checkFence(const Board& currentState, Position pos, bool horizontal) {
-//    assert(currentState.getPlayerFences(currentState.getActivePlayerIndex()) > 0);
+bool checkFence(const Board &board, Position pos, bool horizontal) {
+    //    assert(board.getPlayerFences(board.getActivePlayerIndex()) > 0);
 
     // 7 потому, что нельзя поставить доску на край 8
     if (pos.row < 0 or pos.row > 7 or pos.col < 0 or pos.col > 7) {
         return false;
     }
 
-    auto horizontalFences = currentState.getHorizontalFences();
-    auto verticalFences = currentState.getVerticalFences();
+    auto horizontalFences = board.getHorizontalFences();
+    auto verticalFences = board.getVerticalFences();
     if (std::find(horizontalFences.begin(), horizontalFences.end(), pos) != horizontalFences.end()
-        ||  std::find(verticalFences.begin(), verticalFences.end(), pos) != verticalFences.end()) {
+        || std::find(verticalFences.begin(), verticalFences.end(), pos) != verticalFences.end()) {
         return false;
     }
 
-    if (horizontal)
-    {
-        if (std::find(horizontalFences.begin(), horizontalFences.end(), Position(pos.row, pos.col - 1)) != horizontalFences.end()
-            ||  std::find(horizontalFences.begin(), horizontalFences.end(), Position(pos.row, pos.col + 1)) != horizontalFences.end()) {
+    if (horizontal) {
+        if (std::find(horizontalFences.begin(), horizontalFences.end(), Position(pos.row, pos.col - 1)) !=
+            horizontalFences.end()
+            || std::find(horizontalFences.begin(), horizontalFences.end(), Position(pos.row, pos.col + 1)) !=
+               horizontalFences.end()) {
             return false;
         }
-    } else if (std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row - 1, pos.col)) != verticalFences.end()
-               ||  std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row + 1, pos.col)) != verticalFences.end()) {
+    } else if (std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row - 1, pos.col)) !=
+               verticalFences.end()
+               || std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row + 1, pos.col)) !=
+                  verticalFences.end()) {
         return false;
     }
-    //ПРОВЕРКА ВАЛИДНОСТИ ПОЗИЦИИ
 
-    Board newBoard = currentState;
-    newBoard.addFence(pos, horizontal);
+    //ПРОВЕРКА ВАЛИДНОСТИ ПОЗИЦИИ
+    Board boardCopy = board;
+    boardCopy.addFence(pos, horizontal);
 
     //return true;
-    return Validation::isValidState(newBoard);
+    return isValidState(boardCopy);
 }
 
-bool Validation::checkMove(Board boardCopy, Position target) {
+bool checkMove(const Board& board, Position target) {
 
     //если позиция-цель лежит вне поля
     if (target.col > 8 || target.col < 0 || target.row < 0 || target.row > 8) {
         return false;
     }
 
-    uint8_t dstPosInGraph = (target.row) * BOARD_SIDE_LENGTH + target.col;
-    int posInGraph = boardCopy.getPlayerPos(boardCopy.getActivePlayerIndex()).toSingleInt();
-    int oppPosInGraph = boardCopy.getPlayerPos((boardCopy.getActivePlayerIndex() + 1) % 2).toSingleInt();
+    int dstPosInGraph = (target.row) * BOARD_SIDE_LENGTH + target.col;
+    int posInGraph = board.getPlayerPos(board.getActivePlayerIndex()).toSingleInt();
+    int oppPosInGraph = board.getPlayerPos((board.getActivePlayerIndex() + 1) % 2).toSingleInt();
 
-//    if (boardCopy.getActivePlayer() == 1) {
-//        posInGraph = boardCopy.getP1().row * BOARD_SIDE_LENGTH + boardCopy.getP1().col;
-//        oppPosInGraph = boardCopy.getP2().row * BOARD_SIDE_LENGTH + boardCopy.getP2().col;
-//    } else if (boardCopy.getActivePlayer() == 2){
-//        posInGraph = boardCopy.getP2().row * BOARD_SIDE_LENGTH + boardCopy.getP2().col;
-//        oppPosInGraph = boardCopy.getP1().row * BOARD_SIDE_LENGTH + boardCopy.getP1().col;
-//    }
-
-    Position activePos = Position(posInGraph / 9, posInGraph % 9);
-    Position oppPos = Position(oppPosInGraph / 9, oppPosInGraph % 9);
+    Position activePos = board.getPlayerPos(board.getActivePlayerIndex());
+    Position oppPos = board.getPlayerPos((board.getActivePlayerIndex() + 1) % 2);
 
     // если пытаемся встать на прежнее место
     if (activePos == target) {
         return false;
     }
 
-    std::vector<int> goodFields = boardCopy.getGraph()[posInGraph];
-    std::vector<int> goodOppFields = boardCopy.getGraph()[oppPosInGraph];
+    std::vector<int> goodFields = board.getGraph()[posInGraph];
+    std::vector<int> goodOppFields = board.getGraph()[oppPosInGraph];
 
     // если противник не рядом с нами
-    if(std::find(goodFields.begin(), goodFields.end(), oppPosInGraph) == goodFields.end()) {
+    if (std::find(goodFields.begin(), goodFields.end(), oppPosInGraph) == goodFields.end()) {
         // если желаемое поле рядом с нами
-        if(std::find(goodFields.begin(), goodFields.end(), dstPosInGraph) != goodFields.end()) {
+        if (std::find(goodFields.begin(), goodFields.end(), dstPosInGraph) != goodFields.end()) {
             return true;
         } else {
             // если противника рядом нет и мы хотим пойти на дальние клетки, то нельзя
@@ -120,7 +114,7 @@ bool Validation::checkMove(Board boardCopy, Position target) {
     }
 
     // если ходим на свободные клетки рядом
-    if(std::find(goodFields.begin(), goodFields.end(), dstPosInGraph) != goodFields.end()) {
+    if (std::find(goodFields.begin(), goodFields.end(), dstPosInGraph) != goodFields.end()) {
         return true;
     }
 
@@ -167,7 +161,7 @@ bool Validation::checkMove(Board boardCopy, Position target) {
         //если оппонент перед нами
         if (oppPos.row == target.row && oppPos.col == activePos.col) {
             //смотрим на клетку за соперником
-            uint8_t nextToOppPosInGraph = oppPosInGraph - 9;
+            int nextToOppPosInGraph = oppPosInGraph - BOARD_SIDE_LENGTH;
             //если в нее можно попасть, то нельзя ходить по диагонали
             if (std::find(goodOppFields.begin(), goodOppFields.end(), nextToOppPosInGraph) != goodOppFields.end()) {
                 return false;
@@ -186,7 +180,7 @@ bool Validation::checkMove(Board boardCopy, Position target) {
         //если оппонент перед нами
         if (oppPos.row == target.row && oppPos.col == activePos.col) {
             //смотрим на клетку за соперником
-            uint8_t nextToOppPosInGraph = oppPosInGraph + 9;
+            int nextToOppPosInGraph = oppPosInGraph + BOARD_SIDE_LENGTH;
             //если в нее можно попасть, то нельзя ходить по диагонали
             if (std::find(goodOppFields.begin(), goodOppFields.end(), nextToOppPosInGraph) != goodOppFields.end()) {
                 return false;
@@ -201,3 +195,5 @@ bool Validation::checkMove(Board boardCopy, Position target) {
     }
     return false;
 }
+
+} // Validation
