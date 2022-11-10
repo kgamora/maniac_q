@@ -3,41 +3,40 @@
 //
 #include "game.hpp"
 
-Game::Game(Mode mode, BoardInit boardInit, std::string path, int player) {
-    this->mode = mode;
+Game::Game(Mode mode, BoardInit boardInit, const std::string& path, int player) : mode_(mode) {
     if (boardInit == fromFile) {
-        std::fstream fileNotation(path, fileNotation.in);
-        currentState = Board(fileNotation);
+        std::fstream fileNotation(path, std::fstream::in);
+        currentState_ = Board(fileNotation);
     }
-    if (mode == engineInteractive) {
-        currentState.setMaxPlayerIndex(player);
+    if (mode == interactive) {
+        currentState_.setMaxPlayerIndex(player);
     } else if (mode == play) {
-        currentState.setMaxPlayerIndex((player + 1) % 2);
+        currentState_.setMaxPlayerIndex((player + 1) % 2);
     }
 }
 
 void Game::run() {
-    if (mode == Mode::engine) {
+    if (mode_ == Mode::engine) {
         runEngine();
-    } else if (mode == Mode::engineInteractive) {
+    } else if (mode_ == Mode::interactive) {
         runEngineInteractive();
-    } else if (mode == Mode::play) {
+    } else if (mode_ == Mode::play) {
         runPlay();
     }
 }
 
 void Game::runEngine() {
-    std::string result = getBestMoveOnDepth(currentState, 1);
+    std::string result = getBestMoveOnDepth(currentState_, 1);
     std::cout << result;
 }
 
 void Game::runEngineInteractive() {
-    while (!Validation::isFinished(currentState)) {
-        bool playerTurn = currentState.getActivePlayerIndex() == currentState.getMaxPlayerIndex();
+    while (!Validation::isFinished(currentState_)) {
+        bool playerTurn = currentState_.getActivePlayerIndex() == currentState_.getMaxPlayerIndex();
         std::string turn;
         std::string prompt = playerTurn ? PLAYER_MOVE_PROMPT : PLAYER2_MOVE_PROMPT;
         if (playerTurn) {
-            turn = getBestMoveOnDepth(currentState, 1);
+            turn = getBestMoveOnDepth(currentState_, 1);
             std::cout << BEST_MOVE << turn << std::endl;
         }
         std::cout << prompt << std::endl;
@@ -46,14 +45,14 @@ void Game::runEngineInteractive() {
             std::cout << BAD_TURN << std::endl;
             continue;
         }
-        currentState = makeTurn(currentState, turn);
-        printBoard(currentState);
+        currentState_ = makeTurn(currentState_, turn);
+        printBoard(currentState_);
     }
 }
 
 void Game::runPlay() {
-    while (!Validation::isFinished(currentState)) {
-        bool playerTurn = currentState.getActivePlayerIndex() != currentState.getMaxPlayerIndex();
+    while (!Validation::isFinished(currentState_)) {
+        bool playerTurn = currentState_.getActivePlayerIndex() != currentState_.getMaxPlayerIndex();
         std::string turn;
         std::string prompt = PLAYER_MOVE_PROMPT;
         if (playerTurn) {
@@ -64,11 +63,11 @@ void Game::runPlay() {
                 continue;
             }
         } else {
-            turn = getBestMoveOnDepth(currentState, 1);
+            turn = getBestMoveOnDepth(currentState_, 1);
             std::cout << BOT_MOVES << turn << std::endl;
         }
-        currentState = makeTurn(currentState, turn);
-        printBoard(currentState);
+        currentState_ = makeTurn(currentState_, turn);
+        printBoard(currentState_);
     }
 }
 

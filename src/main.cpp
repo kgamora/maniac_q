@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     } else if (strcmp(cmode, "--engine") == 0) {
         if (strcmp(argv[2], "interactive") == 0) {
             nextArg++;
-            mode = Mode::engineInteractive;
+            mode = Mode::interactive;
         } else {
             mode = Mode::engine;
         }
@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
         boardInit = BoardInit::fromFile;
     } else {
         nextArg++;
-        boardInit = BoardInit::fromStart;
+        boardInit = BoardInit::fromStdIn;
     }
     int player;
     if (strcmp(argv[nextArg], "--player") == 0) {

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "board.hpp"
 #include "fstream"
 #include "engine.hpp"
@@ -12,26 +13,26 @@
 
 enum Mode {
     play,
-    engineInteractive,
+    interactive,
     engine
 };
 
 enum BoardInit {
     fromFile,
-    fromStart
+    fromStdIn
 };
 
 class Game {
 public:
 
-    Game(Mode, BoardInit, std::string, int);
-
+    Game(Mode, BoardInit, const std::string&, int);
     void run();
 
 private:
     void runEngine();
     void runEngineInteractive();
     void runPlay();
-    Mode mode;
-    Board currentState;
+
+    Mode mode_;
+    Board currentState_;
 };
