@@ -102,9 +102,10 @@ Board::Board(std::istream& is) : Board() {
     is >> gamePosition;
 //    setActivePlayer(gamePosition[0]);
     activePlayerIndex = gamePosition[0] - '1';
+    maxPlayerIndex = activePlayerIndex;
 
-    players[0].isMaxPlayer = false;
-    players[1].isMaxPlayer = true;
+    players[0].isMaxPlayer = activePlayerIndex == 0;
+    players[1].isMaxPlayer = activePlayerIndex == 1;
     players[0].startRow = 0;
     players[1].startRow = BOARD_SIDE_LENGTH - 1;
     players[0].targetRow = players[1].startRow;

@@ -40,7 +40,7 @@ int movesToNextColumn(const Board& board, int player_position, int active_player
         while (nodes_on_level != 0) {
             int current_position = q.front();
 
-            if (active_player == 1) {
+            if (active_player == 0) {
                 if (current_position / BOARD_SIDE_LENGTH == player_position / BOARD_SIDE_LENGTH + 1) {
                     return depth;
                 }
@@ -77,7 +77,11 @@ double evalPosition(const Board& board) {
     int f2 = positionDifference(board.getPlayerPos(minPlayer).toSingleInt(), board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
     int f3 = movesToNextColumn(board, board.getPlayerPos(maxPlayer).toSingleInt(), maxPlayer);
     int f4 = movesToNextColumn(board, board.getPlayerPos(minPlayer).toSingleInt(), minPlayer);
-    return 0.6 * f1 + 0.6001 * f2 + 14.45 * f3 + 6.52 * f4;
+//    std::cout << "distanceToBase: " << f1 << std::endl;
+//    std::cout << "positionDifference: " << f2 << std::endl;
+//    std::cout << "movesToNextColumn(max(" << maxPlayer << ")): " << f3 << std::endl;
+//    std::cout << "movesToNextColumn(min(" << minPlayer << ")): " << f4 << std::endl;
+    return f1 + f2 + f3 - f4;
 }
 
 std::vector<Board> stateChildren(const Board& board) {
@@ -99,10 +103,10 @@ std::vector<Board> stateChildren(const Board& board) {
 }
 
 double alpha_beta(const Board& board, int depth, double alpha, double beta, int maximizingPlayer) {
-    static int counter = 0;
-    ++counter;
-    if (counter % 100 == 0)
-        std:: cout << counter << std:: endl;
+//    static int counter = 0;
+//    ++counter;
+//    if (counter % 100 == 0)
+//        std:: cout << counter << std:: endl;
     if (depth == 0) {
         return evalPosition(board);
     }
@@ -152,7 +156,7 @@ std::string getBestMoveOnDepth(const Board& startBoard, int depth) {
 
     for (const auto& [str, board] : children) {
         double stateEval = alpha_beta(board, depth, std::numeric_limits<double>::min(), std::numeric_limits<double>::max(), false);
-        if (result < stateEval) {
+        if (stateEval > result) {
             result = stateEval;
             res_str = str;
         }

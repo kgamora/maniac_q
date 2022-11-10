@@ -5,14 +5,13 @@
 #include "board.hpp"
 #include "read_write.hpp"
 #include "is_valide_state.hpp"
-#include "make_move.hpp"
 #include "engine.hpp"
 
 #include <sstream>
 
 int main() {
     std::stringstream ss;
-    ss << "d4f4e7 / a2a8 / e4 e6 / 7 8 / 2";
+    ss << " / / e1 e9 / 4 4 / 2";
     Board board(ss);
     printBoard(board);
     assert(isValidState(board));
