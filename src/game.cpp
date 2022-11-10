@@ -29,7 +29,7 @@ void Game::run() {
 }
 
 void Game::runEngine() {
-    auto [result_str, result_double] = eng_.min_max(currentState_, 1, true);
+    auto [result_str, result_double] = eng_.min_max(currentState_, SEARCH_DEPTH, true);
     std::cout << result_str;
 }
 
@@ -39,7 +39,7 @@ void Game::runEngineInteractive() {
         std::string turn;
         std::string prompt = playerTurn ? PLAYER_MOVE_PROMPT : PLAYER2_MOVE_PROMPT;
         if (playerTurn) {
-            auto [turn_str, turn_double] = eng_.min_max(currentState_, 1, true);
+            auto [turn_str, turn_double] = eng_.min_max(currentState_, SEARCH_DEPTH, true);
             std::cout << BEST_MOVE << turn_str << std::endl;
         }
         std::cout << prompt << std::endl;
@@ -66,7 +66,7 @@ void Game::runPlay() {
                 continue;
             }
         } else {
-            auto [turn_str, turn_double] = eng_.min_max(currentState_, 1, true);
+            auto [turn_str, turn_double] = eng_.min_max(currentState_, SEARCH_DEPTH, true);
             turn = turn_str;
             std::cout << BOT_MOVES << turn_str << std::endl;
         }

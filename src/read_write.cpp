@@ -3,6 +3,7 @@
 //
 
 #include "read_write.hpp"
+#include "engine.hpp"
 
 std::string translatePosition(Position position) {
     char first = 'a' + static_cast<char>(position.col);
@@ -31,18 +32,25 @@ void printBoard(const Board& board) {
 //    Position p2Pos = board.getP2();
     Position p2Pos = board.getPlayerPos(1);
 
+    std::string hat;
+    hat.append(std::string(3, ' '));
+    for (int j = 0; j < BOARD_SIDE_LENGTH; ++j) {
+        hat.append(' ' + std::string(1, 'a' + j) + std::string(2, ' '));
+    }
+    std::cout << hat << std::endl;
+
     const std::vector<Position>& verticalWalls = board.getVerticalFences();
     const std::vector<Position>& horizontalWalls = board.getHorizontalFences();
 
     for (int i = 0; i < 19; ++i) {
         std::string line;
         if (i == 0 or i == 18) {
-            line.append('+' + std::string(35, '-') + '+');
+            line.append(std::string(2, ' ') + '+' + std::string(35, '-') + '+');
         } else {
             if (i % 2 == 0) {
                 for (int j = 0; j < BOARD_SIDE_LENGTH; ++j) {
                     if (j == 0) {
-                        line.append("|");
+                        line.append("  |");
                     } else {
                         line.append("+");
                     }
@@ -58,7 +66,8 @@ void printBoard(const Board& board) {
                 }
                 line.append("|");
             } else {
-                line.append("|");
+                line.append(1, '1' + i/2);
+                line.append("-|");
                 for (int j = 0; j < BOARD_SIDE_LENGTH; ++j) {
                     if (i == (p1Pos.row) * 2 + 1 and j == p1Pos.col) {
                         line.append(" X ");
@@ -88,5 +97,8 @@ void printBoard(const Board& board) {
     std::cout << "Ход игрока: " << board.getActivePlayerIndex() + 1 << std::endl;
     std::cout << "Количество досок у игрока 1: " << board.getPlayerFences(0) << std::endl;
     std::cout << "Количество досок у игрока 2: " << board.getPlayerFences(1) << std::endl;
+    Engine engine;
+    double a = engine.evalPosition(board);
+    std::cout << "Оценка положения после этого хода: " << a;
     std::cout << std::endl;
 }

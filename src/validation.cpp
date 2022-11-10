@@ -1,6 +1,5 @@
 #include "board.hpp"
 #include "validation.hpp"
-#include "read_write.hpp"
 
 #include <stack>
 #include <vector>
@@ -53,7 +52,7 @@ bool isValidState(const Board &board) {
         if (outOfBorder) return false;
 
         for (int j = i + 1; j < horizontalFences.size(); j++) {
-            int jRow = horizontalFences[j].col;
+            int jRow = horizontalFences[j].row;
             int jCol = horizontalFences[j].col;
 
             if (jRow == iRow && (iCol == jCol + 1 || iCol == jCol - 1 || iCol == jCol)) return false;
@@ -69,10 +68,12 @@ bool isValidState(const Board &board) {
         if (outOfBorder) return false;
 
         for (int j = i + 1; j < verticalFences.size(); j++) {
-            int jRow = verticalFences[j].col;
+            int jRow = verticalFences[j].row;
             int jCol = verticalFences[j].col;
 
-            if (jCol == iCol && (iRow == jRow + 1 || iRow == jRow - 1 || iRow == jRow)) return false;
+            if (jCol == iCol && (iRow == jRow + 1 || iRow == jRow - 1 || iRow == jRow)){
+                return false;
+            }
         }
     }
 
@@ -93,14 +94,15 @@ bool isValidState(const Board &board) {
 }
 
 bool checkFence(const Board &board, Position pos, bool horizontal) {
-    //    assert(board.getPlayerFences(board.getActivePlayerIndex()) > 0);
 
     // 7 потому, что нельзя поставить доску на край 8
     if (pos.row < 0 or pos.row > 7 or pos.col < 0 or pos.col > 7) {
+        std::cout << "sdlmkk1" << std::endl;
         return false;
     }
 
     if (board.getPlayers()[board.getActivePlayerIndex()].fenceCount == 0) {
+        std::cout << "sdlmkk2" << std::endl;
         return false;
     }
 
@@ -108,6 +110,7 @@ bool checkFence(const Board &board, Position pos, bool horizontal) {
     auto verticalFences = board.getVerticalFences();
     if (std::find(horizontalFences.begin(), horizontalFences.end(), pos) != horizontalFences.end()
         || std::find(verticalFences.begin(), verticalFences.end(), pos) != verticalFences.end()) {
+        std::cout << "sdlmkk3" << std::endl;
         return false;
     }
 
@@ -116,12 +119,14 @@ bool checkFence(const Board &board, Position pos, bool horizontal) {
             horizontalFences.end()
             || std::find(horizontalFences.begin(), horizontalFences.end(), Position(pos.row, pos.col + 1)) !=
                horizontalFences.end()) {
+            std::cout << "sdlmkk4" << std::endl;
             return false;
         }
     } else if (std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row - 1, pos.col)) !=
                verticalFences.end()
                || std::find(verticalFences.begin(), verticalFences.end(), Position(pos.row + 1, pos.col)) !=
                   verticalFences.end()) {
+        std::cout << "sdlmkk5" << std::endl;
         return false;
     }
 
@@ -265,27 +270,27 @@ bool isGameFinished(const Board& board) {
     return false;
 }
 
-    bool checkTurn(const Board &board, const std::string &turn) {
-        if (!(turn.size() == 2 or turn.size() == 3)) {
-            return false;
-        }
-        int row = turn[1] - '1';
-        int col = turn[0] - 'a';
-        if (row < 0 or row > 8 or col < 0 or col > 8) {
-            return false;
-        }
-        if (turn.size() == 3) {
-            if (turn[2] != 'h' and turn[2] != 'v') {
-                return false;
-            }
-            if (!checkFence(board, {row, col}, turn[2] == 'h')) {
-                return false;
-            }
-        }
-        if (turn.size() == 2 and not checkMove(board, {row, col})) {
-            return false;
-        }
-        return true;
+bool checkTurn(const Board &board, const std::string &turn) {
+    if (!(turn.size() == 2 or turn.size() == 3)) {
+        return false;
     }
+    int row = turn[1] - '1';
+    int col = turn[0] - 'a';
+    if (row < 0 or row > 8 or col < 0 or col > 8) {
+        return false;
+    }
+    if (turn.size() == 3) {
+        if (turn[2] != 'h' and turn[2] != 'v') {
+            return false;
+        }
+        if (!checkFence(board, {row, col}, turn[2] == 'h')) {
+            return false;
+        }
+    }
+    if (turn.size() == 2 and not checkMove(board, {row, col})) {
+        return false;
+    }
+    return true;
+}
 
 } // Validation

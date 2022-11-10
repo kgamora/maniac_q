@@ -10,6 +10,7 @@
 #define BEST_MOVE "Движок рекомендует ход: "
 #define BAD_TURN "Незаконный или невалидный ход: "
 #define BOT_MOVES "Бот сделал ход: "
+#define SEARCH_DEPTH 2
 
 enum Mode {
     play,
