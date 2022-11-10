@@ -15,12 +15,9 @@ int main(int argc, char **argv) {
     if (strcmp(cmode, "--play") == 0) {
         mode = Mode::play;
     } else if (strcmp(cmode, "--engine") == 0) {
-        if (strcmp(argv[2], "interactive") == 0) {
-            nextArg++;
-            mode = Mode::interactive;
-        } else {
-            mode = Mode::engine;
-        }
+        mode = Mode::engine;
+    } else if (strcmp(cmode, "--interactive") == 0) {
+        mode = Mode::interactive;
     } else {
         std::cout << "unknown argument: " << cmode;
         return 1;

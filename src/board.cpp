@@ -1,10 +1,6 @@
 #include "board.hpp"
 
 Board::Board() :
-//                 p1Fences(FENCE_COUNT),
-//                 p2Fences(FENCE_COUNT),
-//                 p1(0, BOARD_SIDE_LENGTH / 2),
-//                 p2(BOARD_SIDE_LENGTH - 1, BOARD_SIDE_LENGTH / 2),
                  players(2),
                  graph(board_size),
                  activePlayerIndex(0)
@@ -13,11 +9,8 @@ Board::Board() :
     // 1 - agent
     players[0].pos = {0, BOARD_SIDE_LENGTH / 2};
     players[0].fenceCount = FENCE_COUNT;
-    players[0].isMaxPlayer = false;
     players[1].pos = {BOARD_SIDE_LENGTH - 1, BOARD_SIDE_LENGTH / 2};
     players[1].fenceCount = FENCE_COUNT;
-    players[1].isMaxPlayer = true;
-    maxPlayerIndex = 1;
 
     players[0].startRow = 0;
     players[1].startRow = BOARD_SIDE_LENGTH - 1;
