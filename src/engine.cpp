@@ -180,7 +180,7 @@ std::pair<std::string, double> Engine::min_max(const Board& startBoard, int dept
     // если depth == 0, то считаем текущую позицию
     if (depth == 0) {
         double evalCurPos = evalPosition(startBoard);
-        return std::make_pair("",evalCurPos);
+        return std::make_pair("", evalCurPos);
     }
 
     // если хотим проанализировать хотя бы один ход вперед
